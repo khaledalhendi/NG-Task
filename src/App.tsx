@@ -1,11 +1,25 @@
 import * as React from 'react';
 import './App.css';
+import Button from './Button';
 
-import logo from './logo.svg';
 
+// import logo from './logo.svg';
+
+
+ 
+ const Result = () => {
+   return <div>..F.</div>;
+ };
+ 
 class App extends React.Component {
   public render() {
-    return (
+    return( 
+      <div>
+      <Button />
+      <Result />
+      </div>
+     );
+    /* return (
       <div className="App">
         <header className="App-header">
           <img src={logo} className="App-logo" alt="logo" />
@@ -15,7 +29,7 @@ class App extends React.Component {
           To get started, edit <code>src/App.tsx</code> and save to reload.
         </p>
       </div>
-    );
+    );*/
   }
 }
 
