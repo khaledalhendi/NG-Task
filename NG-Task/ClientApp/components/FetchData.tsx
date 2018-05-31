@@ -3,6 +3,7 @@ import { Link, RouteComponentProps } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { ApplicationState }  from '../store';
 import * as WeatherForecastsState from '../store/WeatherForecasts';
+import { bindActionCreators } from 'redux';
 
 // At runtime, Redux will merge together...
 type WeatherForecastProps =
@@ -67,7 +68,20 @@ class FetchData extends React.Component<WeatherForecastProps, {}> {
     }
 }
 
+const mapStateToProps = (state: ApplicationState): WeatherForecastProps => {
+    return {
+        forecasts: state.weatherForecasts.forecasts
+    } as any
+};
+
+const mapDispatchToProps = (dispatch: any): any => {
+    return bindActionCreators({
+        requestWeatherForecasts:
+            WeatherForecastsState.actionCreators.requestWeatherForecasts
+    }, dispatch);
+};
+
 export default connect(
-    (state: ApplicationState) => state.weatherForecasts, // Selects which state properties are merged into the component's props
-    WeatherForecastsState.actionCreators                 // Selects which action creators are merged into the component's props
-)(FetchData) as typeof FetchData;
+    mapStateToProps,
+    mapDispatchToProps
+)(FetchData) as any;
