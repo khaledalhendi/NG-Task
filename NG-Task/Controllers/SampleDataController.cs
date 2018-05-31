@@ -6,13 +6,19 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace NG_Task.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/wtf")]
     public class SampleDataController : Controller
     {
         private static string[] Summaries = new[]
         {
             "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
         };
+
+        [HttpGet]
+        public string h()
+        {
+            return "hello"; 
+        }
 
         [HttpGet("[action]")]
         public IEnumerable<WeatherForecast> WeatherForecasts(int startDateIndex)

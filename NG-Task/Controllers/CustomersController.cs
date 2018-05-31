@@ -1,17 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using ng.api;
-using ng_api.Entities;
-using ng_api.Models;
+using NG_Task.Entities;
+using NG_Task.Models;
 
-namespace ng_api.Controllers
+namespace NG_Task.Controllers
 {
-    [Produces("application/json")]
+    //[Produces("application/json")]
     [Route("api/customers")]
     public class CustomersController : Controller
     {
@@ -19,12 +15,13 @@ namespace ng_api.Controllers
 
         public CustomersController(NGContext NGContext)
         {
-            this.NGContext = NGContext; 
+            this.NGContext = NGContext;
         }
+
         [HttpGet]
         public IActionResult GetCustomers()
         {
-            IEnumerable<CustomerViewDto> result = AutoMapper.Mapper.Map<IEnumerable<CustomerViewDto>>(NGContext.Customers); 
+            IEnumerable<CustomerViewDto> result = AutoMapper.Mapper.Map<IEnumerable<CustomerViewDto>>(NGContext.Customers);
 
             return Ok(result);
         }
@@ -32,15 +29,15 @@ namespace ng_api.Controllers
         [HttpGet("{customerId}", Name = "CustomerDetails")]
         public IActionResult GetCustomer(int customerId)
         {
-            Customer customer = NGContext.Customers.Include(c => c.Accounts).FirstOrDefault(c => c.Id == customerId); 
+            Customer customer = NGContext.Customers.Include(c => c.Accounts).FirstOrDefault(c => c.Id == customerId);
 
-            if(customer == null)
+            if (customer == null)
             {
-                return NotFound(); 
+                return NotFound();
             }
 
-            CustomerDto customerDto = AutoMapper.Mapper.Map<CustomerDto>(customer); 
-            
+            CustomerDto customerDto = AutoMapper.Mapper.Map<CustomerDto>(customer);
+
             return Ok(customerDto);
         }
 
@@ -60,14 +57,14 @@ namespace ng_api.Controllers
             }
 
             Account account = AutoMapper.Mapper.Map<Account>(accountCreateDto);
-            account.CustomerId = customerId; 
+            account.CustomerId = customerId;
 
             NGContext.Accounts.Add(account);
             NGContext.SaveChanges();
 
 
             AccountDto accountDto = AutoMapper.Mapper.Map<AccountDto>(account);
-            return CreatedAtRoute("CustomerDetails", new { customerId = customerId }, accountDto);
+            return CreatedAtRoute("CustomerDetails", new { customerId }, accountDto);
         }
 
         [HttpDelete("{customerId}/account/{accountId}")]
@@ -91,7 +88,7 @@ namespace ng_api.Controllers
             NGContext.SaveChanges();
 
             AccountDto accountDto = AutoMapper.Mapper.Map<AccountDto>(account);
-            return CreatedAtRoute("CustomerDetails", new { customerId = customerId }, accountDto);
+            return CreatedAtRoute("CustomerDetails", new { customerId }, accountDto);
         }
 
 

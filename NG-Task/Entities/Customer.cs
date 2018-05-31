@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace ng_api.Entities
+namespace NG_Task.Entities
 {
     public class Customer
     {
@@ -13,6 +13,7 @@ namespace ng_api.Entities
 
         [Required]
         [StringLength(50)]
+        [Column(TypeName = "varchar(50)")]
         public string Name { get; set; }
 
         [Column(TypeName = "datetime2")]

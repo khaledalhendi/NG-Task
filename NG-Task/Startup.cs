@@ -5,8 +5,12 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.SpaServices.Webpack;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using NG_Task.Entities;
+using NG_Task.Models;
+using NG_Task.Seed;
 
 namespace NG_Task
 {
@@ -23,10 +27,13 @@ namespace NG_Task
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMvc();
+
+            string connectionString = "Server=(localdb)\\mssqllocaldb;Database=NGCore;Trusted_Connection=True;";
+            services.AddDbContext<NGContext>(o => o.UseSqlServer(connectionString));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, NGContext context)
         {
             if (env.IsDevelopment())
             {
@@ -42,6 +49,17 @@ namespace NG_Task
                 app.UseExceptionHandler("/Home/Error");
             }
 
+            context.EnsureSeedDatabase();
+
+            AutoMapper.Mapper.Initialize(c => {
+
+                c.CreateMap<Customer, CustomerDto>();
+                c.CreateMap<Customer, CustomerViewDto>();
+
+                c.CreateMap<Account, AccountDto>();
+
+                c.CreateMap<AccountCreateDto, Account>();
+            });
             app.UseStaticFiles();
 
             app.UseMvc(routes =>
@@ -49,6 +67,10 @@ namespace NG_Task
                 routes.MapRoute(
                     name: "default",
                     template: "{controller=Home}/{action=Index}/{id?}");
+
+                routes.MapRoute(
+                    name: "api",
+                    template: "api/*");
 
                 routes.MapSpaFallbackRoute(
                     name: "spa-fallback",
