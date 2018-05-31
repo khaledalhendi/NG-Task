@@ -1,11 +1,9 @@
-﻿using ng_api.Entities;
-using ng_api.Models;
+﻿using NG_Task.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 
-namespace ng_api.Seed
+namespace NG_Task.Seed
 {
     public static class NGContextExtension
     {
@@ -43,8 +41,8 @@ namespace ng_api.Seed
                     accounts.Add(new Account() {
                         CustomerId = c.Id,
                         Balance = (decimal)(100 * r.NextDouble() * r.Next(5)),
-                        Type = types[r.Next(3)],
-                        ClassCodeValue = classCodes[r.Next(3)],
+                        //Type = types[r.Next(3)],
+                        //ClassCodeValue = classCodes[r.Next(3)],
                         Customer = c,
                     });
             }

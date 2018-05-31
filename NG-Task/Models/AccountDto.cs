@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ng_api.Models
+namespace NG_Task.Models
 {
     public class AccountDto
     {
