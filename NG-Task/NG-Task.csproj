@@ -25,6 +25,14 @@
     <Compile Remove="Entities\NGContextFactory.cs" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Remove="ClientApp\components\CustomerDetail.tsx" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <TypeScriptCompile Include="ClientApp\components\CustomerDetail.tsx" />
+  </ItemGroup>
+
   <Target Name="DebugRunWebpack" BeforeTargets="Build" Condition=" '$(Configuration)' == 'Debug' And !Exists('wwwroot\dist') ">
     <!-- Ensure Node.js is installed -->
     <Exec Command="node --version" ContinueOnError="true">
