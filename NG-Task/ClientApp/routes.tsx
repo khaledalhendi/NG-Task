@@ -7,7 +7,6 @@ import CustomerDetail from './components/CustomerDetail';
 
 export const routes = <Layout>
     <Route exact path='/' component={ Home } />
-    <Route path='/fetchdata/:startDateIndex?' component={FetchData} />
-    <Route path='/customer/:customerId?' component={CustomerDetail} />
-
+    <Route path='/fetchdata/:startDateIndex?' component={ FetchData } />
+    <Route path='/customer/:customerId?' component={ CustomerDetail } />
 </Layout>;

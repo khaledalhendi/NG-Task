@@ -17,6 +17,7 @@ const history = createBrowserHistory({ basename: baseUrl });
 
 // Get the application-wide store instance, prepopulating with state from the server where available.
 const initialState = (window as any).initialReduxState as ApplicationState;
+initialState.customerList = { customers: [{ id: 0, name: "none" }] }; 
 const store = configureStore(history, initialState);
 
 function renderApp() {
