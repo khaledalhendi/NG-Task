@@ -20,9 +20,8 @@ export class CustomerList extends React.Component<CustomerListPros, {}>{
             <ul>
                 {this.props.customers.map(c =>
                     <li key={c.id}>
-                        <Link to={`/customer/${c.id}`}>{c.name}</Link>
+                        <Link to={`/${c.id}`}>{c.name}</Link>
                     </li>
-
                 )}
             </ul>
         </div>;

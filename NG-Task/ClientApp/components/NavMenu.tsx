@@ -7,21 +7,11 @@ export class NavMenu extends React.Component<{}, {}> {
                 <div className='navbar navbar-inverse'>
                 <ul className='nav navbar-nav'>
                     <li>
-                        <Link className='navbar-brand' to={'/'}>NG_Task</Link>
+                        <Link className='navbar-brand' to={'/'}>NG Task</Link>
                     </li>
                     <li>
                         <NavLink exact to={ '/' } activeClassName='active'>
-                            <span className='glyphicon glyphicon-home'></span> Home
-                        </NavLink>
-                    </li>
-                    <li>
-                        <NavLink to={ '/customer' } activeClassName='active'>
-                            <span className='glyphicon glyphicon-education'></span> Customer
-                        </NavLink>
-                    </li>
-                    <li>
-                        <NavLink to={ '/fetchdata' } activeClassName='active'>
-                            <span className='glyphicon glyphicon-th-list'></span> Fetch data
+                            <span className='glyphicon glyphicon-home'></span> Customers
                         </NavLink>
                     </li>
                 </ul>

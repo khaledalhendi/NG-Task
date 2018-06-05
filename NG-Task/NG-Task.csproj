@@ -24,6 +24,9 @@
   <ItemGroup>
     <None Remove="ClientApp\components\Customer.tsx" />
     <None Remove="ClientApp\components\CustomerDetail.tsx" />
+    <None Remove="ClientApp\components\FetchData.tsx" />
+    <None Remove="ClientApp\components\Home.tsx" />
+    <None Remove="ClientApp\store\WeatherForecasts.ts" />
   </ItemGroup>
 
   <ItemGroup>
