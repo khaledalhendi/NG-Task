@@ -8,5 +8,6 @@ namespace NG_Task.Models
     public class AccountCreateDto
     {
         public float Balance { get; set; }
+        public string CurrencyISO { get; set; }
     }
 }

@@ -9,48 +9,17 @@ namespace NG_Task.Seed
     {
         public static void EnsureSeedDatabase(this NGContext context)
         {
+            if (context.Currencies.Any() == false)
+                SeedCurrencies(context);
+
             if (context.Customers.Any() == false)
                 SeedCustomers(context);
 
             if (context.Accounts.Any() == false)
                 SeedAcconuts(context);
-
         }
-
-        private static void SeedAcconuts(NGContext context)
-        {
-            IEnumerable<Account> Accounts = CreateAccounts(context.Customers.ToList());
-
-            context.Accounts.AddRange(Accounts);
-            context.SaveChanges();
-        }
-
-        private static IEnumerable<Account> CreateAccounts(IEnumerable<Customer> customers)
-        {
-            string[] types = { "CK", "SV", "CD" };
-            string[] classCodes = { "33", "44", "301" };
-
-            const int seed = 42;  
-            Random r = new Random(seed); //reusable
-
-            List<Account> accounts = new List<Account>();
-            foreach (var c in customers)
-            {
-                for (int i = 0; i < 1 + r.Next(5); i++)
-                {
-                    accounts.Add(new Account() {
-                        CustomerId = c.Id,
-                        Balance = (decimal)(100 * r.NextDouble() * r.Next(5)),
-                        //Type = types[r.Next(3)],
-                        //ClassCodeValue = classCodes[r.Next(3)],
-                        Customer = c,
-                    });
-            }
-            }
-            return accounts; 
-
-        }
-
+      
+        #region Customer
         private static void SeedCustomers(NGContext context)
         {
             IEnumerable<Customer> Customers = CreateCustomers();
@@ -81,5 +50,87 @@ namespace NG_Task.Seed
                 }
             };
         }
+
+        #endregion
+        #region Accounts
+        private static void SeedAcconuts(NGContext context)
+        {
+            IEnumerable<Account> Accounts = CreateAccounts(context, context.Customers.ToList());
+
+            context.Accounts.AddRange(Accounts);
+            context.SaveChanges();
+        }
+
+        private static IEnumerable<Account> CreateAccounts(NGContext context, IEnumerable<Customer> customers)
+        {
+            string[] types = { "CK", "SV", "CD" };
+            string[] classCodes = { "33", "44", "301" };
+
+            Currency[] currencies = context.Currencies.ToArray(); 
+
+            const int seed = 42;
+            Random r = new Random(seed); //reusable
+
+            List<Account> accounts = new List<Account>();
+            foreach (var c in customers)
+            {
+                for (int i = 0; i < 1 + r.Next(5); i++)
+                {
+                    accounts.Add(new Account()
+                    {
+                        CustomerId = c.Id,
+                        Balance = (decimal)((2000 * r.Next(1,5)) + (1000 * r.NextDouble()) ),
+                        CurrencyISO = currencies[r.Next(currencies.Length)].ISO,
+                        //Type = types[r.Next(3)],
+                        //ClassCodeValue = classCodes[r.Next(3)],
+                    });
+                }
+            }
+            return accounts;
+
+        }
+        #endregion
+        #region Currency
+        private static void SeedCurrencies(NGContext context)
+        {
+            IEnumerable<Currency> Currencys = CreateCurrencies();
+
+            context.Currencies.AddRange(Currencys);
+            context.SaveChanges();
+        }
+
+        private static IEnumerable<Currency> CreateCurrencies()
+        {
+            return new Currency[]
+            {
+                new Currency{
+                    Name= "Egyption Pund",
+                    ISO= "EGP", 
+                    Multiplier = 1
+                },
+                new Currency{
+                    Name= "Kuwaiti Dinar",
+                    ISO= "KWD",
+                    Multiplier = 0.017m
+                },
+                new Currency{
+                    Name= "United States Dollar",
+                    ISO= "USD",
+                    Multiplier = 0.056m
+                },
+                new Currency{
+                    Name= "Saudi Riyal",
+                    ISO= "SAR",
+                    Multiplier = 0.21m
+                },
+                new Currency{
+                    Name= "Euro",
+                    ISO= "EUR",
+                    Multiplier = 0.048m
+                },
+            };
+
+        }
+        #endregion
     }
 }

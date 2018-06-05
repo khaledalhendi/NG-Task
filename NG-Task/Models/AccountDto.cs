@@ -10,5 +10,6 @@ namespace NG_Task.Models
     {
         public int Id { get; set; }
         public float Balance { get; set; }
+        public string CurrencyISO { get; set; }
     }
 }

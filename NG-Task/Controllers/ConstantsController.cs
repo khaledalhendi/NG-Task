@@ -10,11 +10,16 @@ namespace NG_Task.Controllers
     [Route("api/const")]
     public class ConstantsController : Controller
     { 
-
-        [HttpGet("classcode")]
-        public IActionResult GetClassCodes()
+        [HttpGet("accountType")]
+        public IActionResult GetAccountTypes()
         {
             return Ok(new []{ "CK","SV","KS" }); 
+        }
+
+        [HttpGet("classCode")]
+        public IActionResult GetClassCodes()
+        {
+            return Ok(new[] { "33", "44", "301" });
         }
     }
 }

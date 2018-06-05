@@ -28,7 +28,7 @@ namespace NG_Task
         {
             services.AddMvc();
 
-            string connectionString = "Server=(localdb)\\mssqllocaldb;Database=NGCore;Trusted_Connection=True;";
+            string connectionString = "Server=(localdb)\\mssqllocaldb;Database=NGApp;Trusted_Connection=True;";
             services.AddDbContext<NGContext>(o => o.UseSqlServer(connectionString));
         }
 
