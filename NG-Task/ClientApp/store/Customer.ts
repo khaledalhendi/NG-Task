@@ -19,11 +19,13 @@ export interface CustomerDetail {
     id: number;
     name: string;
     accounts: CustomerAccount[];
+    totalBalance: number; 
 }
 
 export interface CustomerAccount {
     id: number;
     balance: number;
+    currencyISO: string; 
 }
 
 // -----------------

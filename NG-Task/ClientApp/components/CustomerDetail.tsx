@@ -29,11 +29,15 @@ export class CustomerDetail extends React.Component<CustomerDetailProp, {}>{
                     Id: {this.props.customerDetail.id}
                 </ div >
                 < div >
+                    Total Balance: {this.props.customerDetail.totalBalance} EGP
+                </ div >
+                < div >
                     < table className='table' >
                         < thead >
                             < tr >
                                 < th > Id </ th >
                                 < th > Balance </ th >
+                                < th > Currency </ th >
                             </ tr >
                         </ thead >
                         < tbody >
@@ -42,6 +46,7 @@ export class CustomerDetail extends React.Component<CustomerDetailProp, {}>{
                                     < tr key={a.id}>
                                         < td >{a.id}</ td >
                                         < td >{a.balance}</ td >
+                                        < td >{a.currencyISO}</ td >
                                     </ tr >
                                 )}
                         </ tbody >

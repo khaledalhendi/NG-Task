@@ -25,7 +25,7 @@ namespace NG_Task.Entities
         public string CurrencyISO { get; set; }
 
         [ForeignKey("CurrencyISO")]
-        public virtual Currency Currency { get; set; }
+        public Currency Currency { get; set; }
 
         //[Required]
         //[StringLength(3)]

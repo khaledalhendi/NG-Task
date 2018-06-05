@@ -29,7 +29,7 @@ namespace NG_Task.Controllers
         [HttpGet("{customerId}", Name = "CustomerDetails")]
         public IActionResult GetCustomer(int customerId)
         {
-            Customer customer = NGContext.Customers.Include(c => c.Accounts).FirstOrDefault(c => c.Id == customerId);
+            Customer customer = NGContext.Customers.Include(c => c.Accounts).ThenInclude(a => a.Currency).FirstOrDefault(c => c.Id == customerId);
 
             if (customer == null)
             {
@@ -37,6 +37,8 @@ namespace NG_Task.Controllers
             }
 
             CustomerDto customerDto = AutoMapper.Mapper.Map<CustomerDto>(customer);
+
+            customerDto.TotalBalance = customer.Accounts.Sum(a => a.Balance / a.Currency.Multiplier); 
 
             return Ok(customerDto);
         }
