@@ -36,6 +36,7 @@ export class CustomerDetail extends React.Component<CustomerDetailProp, {}>{
                         < thead >
                             < tr >
                                 < th > Id </ th >
+                                < th > AccountType </ th >
                                 < th > Balance </ th >
                                 < th > Currency </ th >
                             </ tr >
@@ -45,6 +46,7 @@ export class CustomerDetail extends React.Component<CustomerDetailProp, {}>{
                                 this.props.customerDetail.accounts.map(a =>
                                     < tr key={a.id}>
                                         < td >{a.id}</ td >
+                                        < td >{a.accountType}</ td >
                                         < td >{a.balance}</ td >
                                         < td >{a.currencyISO}</ td >
                                     </ tr >

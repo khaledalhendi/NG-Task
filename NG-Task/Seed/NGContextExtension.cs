@@ -9,6 +9,9 @@ namespace NG_Task.Seed
     {
         public static void EnsureSeedDatabase(this NGContext context)
         {
+            if (context.AccountTypes.Any() == false)
+                SeedAccountTypes(context);
+
             if (context.Currencies.Any() == false)
                 SeedCurrencies(context);
 
@@ -19,6 +22,25 @@ namespace NG_Task.Seed
                 SeedAcconuts(context);
         }
       
+        #region AccountType
+        private static void SeedAccountTypes(NGContext context)
+        {
+            IEnumerable<AccountType> AccountTypes = CreateAccountTypes();
+
+            context.AccountTypes.AddRange(AccountTypes);
+            context.SaveChanges();
+        }
+
+        private static IEnumerable<AccountType> CreateAccountTypes()
+        {
+            return new List<AccountType>()
+            {
+                new AccountType{Type = "CK" },
+                new AccountType{Type = "SV" },
+                new AccountType{Type = "CD" },
+            };
+        }
+        #endregion
         #region Customer
         private static void SeedCustomers(NGContext context)
         {
@@ -63,9 +85,7 @@ namespace NG_Task.Seed
 
         private static IEnumerable<Account> CreateAccounts(NGContext context, IEnumerable<Customer> customers)
         {
-            string[] types = { "CK", "SV", "CD" };
-            string[] classCodes = { "33", "44", "301" };
-
+            AccountType[] types = context.AccountTypes.ToArray(); 
             Currency[] currencies = context.Currencies.ToArray(); 
 
             const int seed = 42;
@@ -81,7 +101,7 @@ namespace NG_Task.Seed
                         CustomerId = c.Id,
                         Balance = (decimal)((2000 * r.Next(1,5)) + (1000 * r.NextDouble()) ),
                         CurrencyISO = currencies[r.Next(currencies.Length)].ISO,
-                        //Type = types[r.Next(3)],
+                        AccountType = types[r.Next(3)].Type,
                         //ClassCodeValue = classCodes[r.Next(3)],
                     });
                 }

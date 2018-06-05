@@ -7,8 +7,8 @@ namespace NG_Task.Entities
         public DbSet<Customer> Customers { set; get; }
         public DbSet<Account> Accounts { set; get; }
         public DbSet<Currency> Currencies { set; get; }
+        public DbSet<AccountType> AccountTypes { set; get; }
         //public DbSet<ClassCode> ClassCodes { set; get; }
-        //public DbSet<AccountType> AccountTypes { set; get; }
 
         public NGContext(DbContextOptions<NGContext> options) : base (options)
         {

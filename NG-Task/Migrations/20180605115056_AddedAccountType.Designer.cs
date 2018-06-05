@@ -11,9 +11,10 @@ using System;
 namespace NGTask.Migrations
 {
     [DbContext(typeof(NGContext))]
-    partial class NGContextModelSnapshot : ModelSnapshot
+    [Migration("20180605115056_AddedAccountType")]
+    partial class AddedAccountType
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -57,7 +58,7 @@ namespace NGTask.Migrations
 
                     b.HasKey("Type");
 
-                    b.ToTable("AccountTypes");
+                    b.ToTable("AccountType");
                 });
 
             modelBuilder.Entity("NG_Task.Entities.Currency", b =>

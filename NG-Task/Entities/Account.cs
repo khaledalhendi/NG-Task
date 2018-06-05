@@ -34,12 +34,12 @@ namespace NG_Task.Entities
         //[ForeignKey("ClassCodeValue")]
         //public ClassCode ClassCode { get; set; }
 
-        //[Required]
-        //[StringLength(2)]
-        //public string Type { get; set; }
+        [Required]
+        [Column(TypeName = "char(2)")]
+        public string AccountType { get; set; }
 
-        //[ForeignKey("Type")]
-        //public AccountType AccountType { get; set; }
+        [ForeignKey("AccountType")]
+        public AccountType Type { get; set; }
 
     }
 }

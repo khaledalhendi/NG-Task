@@ -26,6 +26,7 @@ export interface CustomerAccount {
     id: number;
     balance: number;
     currencyISO: string; 
+    accountType: string; 
 }
 
 // -----------------

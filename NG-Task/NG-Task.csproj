@@ -5,6 +5,8 @@
     <TypeScriptCompileBlocked>true</TypeScriptCompileBlocked>
     <TypeScriptToolsVersion>2.3</TypeScriptToolsVersion>
     <IsPackable>false</IsPackable>
+    <AssemblyName>NG_Task</AssemblyName>
+    <RootNamespace>NG_Task</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>
