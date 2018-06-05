@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace NG_Task.Controllers
 {
-    [Route("api/wtf")]
+    [Route("api/SampleData")]
     public class SampleDataController : Controller
     {
         private static string[] Summaries = new[]

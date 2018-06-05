@@ -26,10 +26,12 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Remove="ClientApp\components\Customer.tsx" />
     <None Remove="ClientApp\components\CustomerDetail.tsx" />
   </ItemGroup>
 
   <ItemGroup>
+    <TypeScriptCompile Include="ClientApp\components\Customer.tsx" />
     <TypeScriptCompile Include="ClientApp\components\CustomerDetail.tsx" />
   </ItemGroup>
 

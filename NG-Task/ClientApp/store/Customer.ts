@@ -4,10 +4,15 @@ import { AppThunkAction } from './';
 // -----------------
 // STATE - This defines the type of data maintained in the Redux store.
 
-export interface CustomerDetailState {
-    isLoading: boolean;
-    customerId: number; 
+export interface CustomerState {
+    isLoading: boolean; 
     customerDetail: CustomerDetail; 
+    customers: CustomerSummary[]; 
+}
+
+export interface CustomerSummary{
+    name: string;
+    id: number;
 }
 
 export interface CustomerDetail {
@@ -25,6 +30,15 @@ export interface CustomerAccount {
 // ACTIONS - These are serializable (hence replayable) descriptions of state transitions.
 // They do not themselves have any side-effects; they just describe something that is going to happen.
 
+interface RequestCustomersAction{
+    type: 'REQUEST_CUSTOMERS'; 
+}
+
+interface ReceiveCustomersAction {
+    type: 'RECEIVE_CUSTOMERS';
+    customers: CustomerSummary[];
+}
+
 interface RequestCustomerDetailsAction {
     type: 'REQUEST_CUSTOMER';
     customerId: number;
@@ -37,23 +51,36 @@ interface ReceiveCustomerDetailsAction {
 
 // Declare a 'discriminated union' type. This guarantees that all references to 'type' properties contain one of the
 // declared type strings (and not any other arbitrary string).
-type KnownAction = RequestCustomerDetailsAction | ReceiveCustomerDetailsAction;
+type KnownAction = RequestCustomersAction | ReceiveCustomersAction | 
+                   RequestCustomerDetailsAction | ReceiveCustomerDetailsAction;
 
 // ----------------
 // ACTION CREATORS - These are functions exposed to UI components that will trigger a state transition.
 // They don't directly mutate state, but they can have external side-effects (such as loading data).
 
 export const actionCreators = {
+
+    requestCustomers: (): AppThunkAction<KnownAction> => (dispatch, getState) => {
+        // Only load data if it's something we don't already have (and are not already loading)
+        if (!getState().customer.customers || getState().customer.customers.length == 0) {
+            let fetchTask = fetch(`api/customers`)
+                .then(response => response.json() as Promise<CustomerSummary[]>)
+                .then(data => {
+                    dispatch({ type: 'RECEIVE_CUSTOMERS', customers: data as CustomerSummary[] });
+                });
+
+            addTask(fetchTask); // Ensure server-side prerendering waits for this to complete
+            dispatch({ type: 'REQUEST_CUSTOMERS' });
+        }
+    },
+
     requestCustomerDetails: (customerId: number): AppThunkAction<KnownAction> => (dispatch, getState) => {
         // Only load data if it's something we don't already have (and are not already loading)
 
-        if (customerId !== getState().customer.customerId) {
-            console.log(`fetching data api/customers/${customerId}`);
+        if (!getState().customer.customerDetail || customerId !== getState().customer.customerDetail.id) {
             let fetchTask = fetch(`api/customers/${customerId}`)
                 .then(response => response.json() as Promise<CustomerDetail>)
                 .then(data => {
-                    console.log(data as CustomerDetail); 
-
                     dispatch({ type: 'RECEIVE_CUSTOMER', customerDetail: data });
                 });
 
@@ -66,28 +93,35 @@ export const actionCreators = {
 // ----------------
 // REDUCER - For a given state and action, returns the new state. To support time travel, this must not mutate the old state.
 
-const unloadedState: CustomerDetailState = { customerId: -1,  customerDetail: null , isLoading: false };
+const unloadedState: CustomerState = { customers: [], customerDetail: null , isLoading: false };
 
-export const reducer: Reducer<CustomerDetailState> = (state: CustomerDetailState, incomingAction: Action) => {
+export const reducer: Reducer<CustomerState> = (state: CustomerState, incomingAction: Action) => {
     const action = incomingAction as KnownAction;
     switch (action.type) {
-        case 'REQUEST_CUSTOMER':
+        case 'REQUEST_CUSTOMERS':
             return {
-                customerId: action.customerId,
+                ...state,
+                isLoading: true
+            };
+        case 'RECEIVE_CUSTOMERS':
+            return {
+                ...state,
+                customers: action.customers,
+                isLoading: false
+            };
+
+        case 'REQUEST_CUSTOMER':
+            return { 
+                ...state,
                 customerDetail: state.customerDetail,
                 isLoading: true
             };
         case 'RECEIVE_CUSTOMER':
-            // Only accept the incoming data if it matches the most recent request. This ensures we correctly
-            // handle out-of-order responses.
-            if (action.customerDetail.id === state.customerId) {
                 return {
-                    customerId: action.customerDetail.id,
+                    ...state,
                     customerDetail: action.customerDetail,
-                    isLoading: true
+                    isLoading: false 
                 };
-            }
-            break;
         default:
             // The following line guarantees that every action in the KnownAction union has been covered by a case above
             const exhaustiveCheck: never = action;
