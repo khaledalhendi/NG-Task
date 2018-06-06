@@ -14,5 +14,7 @@ namespace NG_Task.Entities
         [Key]
         [Column(TypeName ="char(2)")]
         public string Type { get; set; }
+
+        public ICollection<ClassCode> ClassCodes { get; set; } = new HashSet<ClassCode>(); 
     }
 }

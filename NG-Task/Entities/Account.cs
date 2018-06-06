@@ -27,13 +27,6 @@ namespace NG_Task.Entities
         [ForeignKey("CurrencyISO")]
         public Currency Currency { get; set; }
 
-        //[Required]
-        //[StringLength(3)]
-        //public string ClassCode { get; set; }
-
-        //[ForeignKey("ClassCodeValue")]
-        //public ClassCode ClassCode { get; set; }
-
         [Required]
         [Column(TypeName = "char(2)")]
         public string AccountType { get; set; }
@@ -41,5 +34,11 @@ namespace NG_Task.Entities
         [ForeignKey("AccountType")]
         public AccountType Type { get; set; }
 
+        [Required]
+        [Column(TypeName = "char(3)")]
+        public string ClassCode { get; set; }
+
+        [ForeignKey("ClassCode")]
+        public ClassCode Code { get; set; }
     }
 }

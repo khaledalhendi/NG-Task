@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using NG_Task.Entities;
+using NG_Task.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -33,7 +34,33 @@ namespace NG_Task.Controllers
         [HttpGet("classCode")]
         public IActionResult GetClassCodes()
         {
-            return Ok(new[] { "33", "44", "301" });
+            IEnumerable<ClassCode> classCodes = NGContext.ClassCodes.ToArray();
+
+            IEnumerable<ClassCodeDto> classCodesDto = AutoMapper.Mapper.Map<IEnumerable<ClassCodeDto>>(classCodes);
+            var output = classCodesDto.GroupBy(cc => cc.AccountType);
+
+            return Ok(output
+                .Select(o => 
+                new {
+                    accountType = o.Key,
+                    classCodes = o.ToList().Select(c => c.ClassCode)
+                }
+                ));
+        }
+
+        [HttpGet("classCode/{accountType}")]
+        public IActionResult GetClassCodes(string accountType)
+        {
+            IEnumerable<ClassCode> classCodes = NGContext.ClassCodes.Where(cc => cc.AccountType == accountType).ToArray();
+
+            if(classCodes == null || classCodes.Count() == 0)
+            {
+                return BadRequest("Very bad"); 
+            }
+
+            IEnumerable<ClassCodeDto> classCodesDto = AutoMapper.Mapper.Map<IEnumerable<ClassCodeDto>>(classCodes);
+
+            return Ok(classCodesDto.Select(cc => cc.ClassCode).ToArray());
         }
     }
 }

@@ -11,9 +11,10 @@ using System;
 namespace NGTask.Migrations
 {
     [DbContext(typeof(NGContext))]
-    partial class NGContextModelSnapshot : ModelSnapshot
+    [Migration("20180606071832_AddedClassCode")]
+    partial class AddedClassCode
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -32,10 +33,6 @@ namespace NGTask.Migrations
                     b.Property<decimal>("Balance")
                         .HasColumnType("decimal(21,6)");
 
-                    b.Property<string>("ClassCode")
-                        .IsRequired()
-                        .HasColumnType("char(3)");
-
                     b.Property<string>("CurrencyISO")
                         .IsRequired()
                         .HasColumnType("char(3)");
@@ -45,8 +42,6 @@ namespace NGTask.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("AccountType");
-
-                    b.HasIndex("ClassCode");
 
                     b.HasIndex("CurrencyISO");
 
@@ -124,11 +119,6 @@ namespace NGTask.Migrations
                     b.HasOne("NG_Task.Entities.AccountType", "Type")
                         .WithMany()
                         .HasForeignKey("AccountType")
-                        .OnDelete(DeleteBehavior.Cascade);
-
-                    b.HasOne("NG_Task.Entities.ClassCode", "Code")
-                        .WithMany()
-                        .HasForeignKey("ClassCode")
                         .OnDelete(DeleteBehavior.Cascade);
 
                     b.HasOne("NG_Task.Entities.Currency", "Currency")

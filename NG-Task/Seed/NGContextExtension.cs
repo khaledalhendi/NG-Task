@@ -1,4 +1,5 @@
-﻿using NG_Task.Entities;
+﻿using Microsoft.EntityFrameworkCore;
+using NG_Task.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,6 +12,9 @@ namespace NG_Task.Seed
         {
             if (context.AccountTypes.Any() == false)
                 SeedAccountTypes(context);
+
+            if (context.ClassCodes.Any() == false)
+                SeedClassCodes(context);
 
             if (context.Currencies.Any() == false)
                 SeedCurrencies(context);
@@ -39,6 +43,39 @@ namespace NG_Task.Seed
                 new AccountType{Type = "SV" },
                 new AccountType{Type = "CD" },
             };
+        }
+        #endregion
+        #region ClassCodes
+        private static void SeedClassCodes(NGContext context)
+        {
+            IEnumerable<ClassCode> ClassCodes = CreateClassCodes(context.AccountTypes.ToList());
+
+            context.ClassCodes.AddRange(ClassCodes);
+            context.SaveChanges();
+        }
+
+        private static IEnumerable<ClassCode> CreateClassCodes(IEnumerable<AccountType> accountTypes)
+        {
+            const int seed = 42;
+            Random r = new Random(seed); //reusable
+
+            List<int> RandomCodes = Enumerable.Range(0, 100).ToList();
+
+            Func<List<int>, int, int> ReadAndRemove = (list, i) => { int value = list[i]; list.Remove(i); return value; }; 
+
+            List<ClassCode> classes = new List<ClassCode>();
+            foreach (var at in accountTypes)
+            {
+                for (int i = 0; i < 2 + r.Next(3); i++)
+                {
+                    classes.Add(new ClassCode()
+                    {
+                        Code = ""+ReadAndRemove(RandomCodes, r.Next(RandomCodes.Count)),
+                        AccountType = at.Type,
+                    });
+                }
+            }
+            return classes;
         }
         #endregion
         #region Customer
@@ -85,7 +122,8 @@ namespace NG_Task.Seed
 
         private static IEnumerable<Account> CreateAccounts(NGContext context, IEnumerable<Customer> customers)
         {
-            AccountType[] types = context.AccountTypes.ToArray(); 
+            AccountType[] types = context.AccountTypes.Include(a => a.ClassCodes).ToArray();
+
             Currency[] currencies = context.Currencies.ToArray(); 
 
             const int seed = 42;
@@ -96,13 +134,16 @@ namespace NG_Task.Seed
             {
                 for (int i = 0; i < 1 + r.Next(5); i++)
                 {
+                    AccountType accountType = types[r.Next(3)];
+                    ClassCode[] classCodes = accountType.ClassCodes.ToArray(); 
+
                     accounts.Add(new Account()
                     {
                         CustomerId = c.Id,
                         Balance = (decimal)((2000 * r.Next(1,5)) + (1000 * r.NextDouble()) ),
                         CurrencyISO = currencies[r.Next(currencies.Length)].ISO,
-                        AccountType = types[r.Next(3)].Type,
-                        //ClassCodeValue = classCodes[r.Next(3)],
+                        AccountType = accountType.Type,
+                        ClassCode = classCodes[r.Next(3)].Code,
                     });
                 }
             }

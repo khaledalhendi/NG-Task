@@ -25,8 +25,9 @@ export interface CustomerDetail {
 export interface CustomerAccount {
     id: number;
     balance: number;
-    currencyISO: string; 
-    accountType: string; 
+    currencyISO: string;
+    accountType: string;
+    classCode: string;
 }
 
 // -----------------

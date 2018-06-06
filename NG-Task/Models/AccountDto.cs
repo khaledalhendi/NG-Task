@@ -12,5 +12,6 @@ namespace NG_Task.Models
         public float Balance { get; set; }
         public string CurrencyISO { get; set; }
         public string AccountType { get; set; }
+        public string ClassCode { get; set; }
     }
 }
