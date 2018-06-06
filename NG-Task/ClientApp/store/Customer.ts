@@ -6,7 +6,7 @@ import { AppThunkAction } from './';
 
 export interface CustomerState {
     isLoading: boolean; 
-    customerDetail: CustomerDetail; 
+    customerDetail?: CustomerDetail; 
     customers: CustomerSummary[]; 
 }
 
@@ -53,10 +53,23 @@ interface ReceiveCustomerDetailsAction {
     customerDetail: CustomerDetail; 
 }
 
+interface RequestDeleteAccountAction {
+    type: 'REQUEST_DELETE_ACCOUNT';
+    customerId: number; 
+    accountId: number;
+}
+
+interface ReceiveDeleteAccountAction {
+    type: 'RECEIVE_DELETE_ACCOUNT';
+    customerDetail: CustomerDetail; 
+}
+
 // Declare a 'discriminated union' type. This guarantees that all references to 'type' properties contain one of the
 // declared type strings (and not any other arbitrary string).
-type KnownAction = RequestCustomersAction | ReceiveCustomersAction | 
-                   RequestCustomerDetailsAction | ReceiveCustomerDetailsAction;
+type KnownAction = RequestCustomersAction | ReceiveCustomersAction
+                    | RequestCustomerDetailsAction | ReceiveCustomerDetailsAction
+                    | RequestDeleteAccountAction | ReceiveDeleteAccountAction; 
+
 
 // ----------------
 // ACTION CREATORS - These are functions exposed to UI components that will trigger a state transition.
@@ -91,13 +104,26 @@ export const actionCreators = {
             addTask(fetchTask); // Ensure server-side prerendering waits for this to complete
             dispatch({ type: 'REQUEST_CUSTOMER', customerId: customerId });
         }
+    },
+
+    deleteAccount: (customerId: number, accountId: number): AppThunkAction<KnownAction> => (dispatch, getState) => {
+        // Only load data if it's something we don't already have (and are not already loading)
+        let fetchTask = fetch(`api/customers/${customerId}/account/${accountId}`, {method:"DELETE"})
+            .then(response => response.json() as Promise<CustomerDetail>)
+            .then(data =>{
+                dispatch({ type: 'RECEIVE_DELETE_ACCOUNT', customerDetail: data} );
+                });
+
+        addTask(fetchTask); // Ensure server-side prerendering waits for this to complete
+        dispatch({ type: 'REQUEST_DELETE_ACCOUNT', customerId, accountId});
+        }
     }
-};
+
 
 // ----------------
 // REDUCER - For a given state and action, returns the new state. To support time travel, this must not mutate the old state.
 
-const unloadedState: CustomerState = { customers: [], customerDetail: null , isLoading: false };
+const unloadedState: CustomerState = { customers: [] , isLoading: false };
 
 export const reducer: Reducer<CustomerState> = (state: CustomerState, incomingAction: Action) => {
     const action = incomingAction as KnownAction;
@@ -125,7 +151,18 @@ export const reducer: Reducer<CustomerState> = (state: CustomerState, incomingAc
                     ...state,
                     customerDetail: action.customerDetail,
                     isLoading: false 
-                };
+            };
+        case 'REQUEST_DELETE_ACCOUNT':
+            return {
+                ...state, 
+                isLoading: true,
+            }
+        case 'RECEIVE_DELETE_ACCOUNT':
+            return {
+                ...state,
+                isLoading: false,
+                customerDetail: action.customerDetail,
+            }
         default:
             // The following line guarantees that every action in the KnownAction union has been covered by a case above
             const exhaustiveCheck: never = action;

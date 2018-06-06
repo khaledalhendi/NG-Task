@@ -9,6 +9,7 @@ import { bindActionCreators } from 'redux';
 interface CustomerDetailProp 
 {
     customerDetail: CustomerState.CustomerDetail; 
+    onDelete: (accountId: number) => void;  
 }
 
 export class CustomerDetail extends React.Component<CustomerDetailProp, {}>{
@@ -18,6 +19,9 @@ export class CustomerDetail extends React.Component<CustomerDetailProp, {}>{
             {this.props.customerDetail ? this.renderTable() : "Select a customer..."}
         </ div >);
     }
+
+
+
 
     private renderTable() {
         return (
@@ -40,6 +44,7 @@ export class CustomerDetail extends React.Component<CustomerDetailProp, {}>{
                                 < th > ClassCode </ th >
                                 < th > Balance </ th >
                                 < th > Currency </ th >
+                                < th> </th>
                             </ tr >
                         </ thead >
                         < tbody >
@@ -51,6 +56,7 @@ export class CustomerDetail extends React.Component<CustomerDetailProp, {}>{
                                         < td >{a.classCode}</ td >
                                         < td >{a.balance}</ td >
                                         < td >{a.currencyISO}</ td >
+                                        < td> <button className="btn btn-danger" onClick={(e) => this.props.onDelete(a.id)}> Delete</button> </ td >
                                     </ tr >
                                 )}
                         </ tbody >

@@ -37,13 +37,22 @@ class Customer extends React.Component<CustomerProps, {}> {
         }
     }
 
+    accountOnDeleteHandler = (accountId: number) => 
+    {
+        let customerId = parseInt(this.props.match.params.customerId);
+        if (confirm(`Do you really want to delete customer's ${customerId} account: ${accountId}?`)) {
+            this.props.deleteAccount(customerId, accountId);
+        }  
+    }
+
+
     render() {
         return <div >
             <div className=".col-3">
                 <CustomerList customers={this.props.customers}/>
             </div>
             <div className=".col-9">
-                <CustomerDetail customerDetail={this.props.customerDetail} />
+                <CustomerDetail customerDetail={this.props.customerDetail} onDelete={this.accountOnDeleteHandler} />
             </div>
             </div>
     }
@@ -59,7 +68,8 @@ const mapStateToProps = (state: ApplicationState): CustomerProps => {
 const mapDispatchToProps = (dispatch: any): any => {
     return bindActionCreators({
         requestCustomers: CustomerState.actionCreators.requestCustomers,
-        requestCustomerDetails: CustomerState.actionCreators.requestCustomerDetails
+        requestCustomerDetails: CustomerState.actionCreators.requestCustomerDetails,
+        deleteAccount: CustomerState.actionCreators.deleteAccount
     }, dispatch);
 };
 
