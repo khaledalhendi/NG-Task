@@ -4,6 +4,7 @@ import { ApplicationState } from '../store';
 import { connect } from 'react-redux';
 import * as CustomerState  from '../store/Customer';
 import { bindActionCreators } from 'redux';
+import { CreateAccountForm } from "./CreateAccountForm";
 
 // At runtime, Redux will merge together...
 interface CustomerDetailProp 
@@ -62,6 +63,8 @@ export class CustomerDetail extends React.Component<CustomerDetailProp, {}>{
                         </ tbody >
                     </ table >
                 </ div >
+
+                <CreateAccountForm />
             </ div >);
     }
 }
