@@ -64,9 +64,7 @@ namespace NG_Task.Controllers
             NGContext.Accounts.Add(account);
             NGContext.SaveChanges();
 
-
-            AccountDto accountDto = AutoMapper.Mapper.Map<AccountDto>(account);
-            return CreatedAtRoute("CustomerDetails", new { customerId }, accountDto);
+            return GetCustomer(customerId);
         }
 
         [HttpDelete("{customerId}/account/{accountId}")]
@@ -89,8 +87,8 @@ namespace NG_Task.Controllers
             NGContext.Accounts.Remove(account);
             NGContext.SaveChanges();
 
-            AccountDto accountDto = AutoMapper.Mapper.Map<AccountDto>(account);
-            return CreatedAtRoute("CustomerDetails", new { customerId }, accountDto);
+
+            return GetCustomer(customerId); 
         }
 
 

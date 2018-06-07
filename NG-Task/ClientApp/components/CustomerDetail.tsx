@@ -63,8 +63,6 @@ export class CustomerDetail extends React.Component<CustomerDetailProp, {}>{
                         </ tbody >
                     </ table >
                 </ div >
-
-                <CreateAccountForm />
             </ div >);
     }
 }
