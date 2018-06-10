@@ -86,19 +86,6 @@ class Customer extends React.Component<CustomerProps, {}> {
     {
         AccountTypeSelected: (accountType: string) => {
             this.props.requestClassCodes(accountType);
-            this.props.selectAccountType(accountType);
-        },
-
-        ClassCodeSelected: (classCode: string) => {
-            this.props.selectClassCode(classCode);
-        },
-
-        CurrencySelected: (currencyISO: string) => {
-            this.props.selectCurrency(currencyISO);
-        },
-
-        BalanceUpdated: (balance: number) => {
-            this.props.setBalance(balance);
         },
 
         AddAccount: (account: CustomerState.CreateCustomerAccount) => 
@@ -127,10 +114,6 @@ const mapDispatchToProps = (dispatch: any): any => {
         requestAccountTypes: CustomerState.actionCreators.requestAccountTypes,
         requestClassCodes: CustomerState.actionCreators.requestClassCodes,
         requestCurrencies: CustomerState.actionCreators.requestCurrencies,
-        selectAccountType: CustomerState.actionCreators.selectAccountType, 
-        selectClassCode: CustomerState.actionCreators.selectClassCode, 
-        selectCurrency: CustomerState.actionCreators.selectCurrency,
-        setBalance: CustomerState.actionCreators.setBalance, 
     }, dispatch);
 };
 

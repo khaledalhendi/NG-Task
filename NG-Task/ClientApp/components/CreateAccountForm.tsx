@@ -9,21 +9,36 @@ type CreateAccountProp =
     CreateAccount.AccountFormState         // ... state we've requested from the Redux store
     & {
         AccountTypeSelected: (string) => void,
-        ClassCodeSelected: (string) => void,
-        CurrencySelected: (string) => void,
-        BalanceUpdated: (number) => void,
         AddAccount: (CreateCustomerAccount) => void,
     };
 
 interface CreateAccountFormState
 {
-    //selectedAccountType?: string,
-    //selectedClassCode?: string,
-    //selectedCurrencyISO?: string,
-    //balanceInput?: string, 
+    selectedAccountType?: string,
+    selectedClassCode?: string,
+    selectedCurrencyISO?: string,
+    balanceInput?: string, 
 }
 
-export class CreateAccountForm extends React.Component<CreateAccountProp, {}>{
+export class CreateAccountForm extends React.Component<CreateAccountProp, CreateAccountFormState>{
+
+    constructor(props: CreateAccountProp)
+    {
+        super(props); 
+
+       
+    }
+
+    componentWillMount()
+    {
+        this.AppendState(
+            {
+                balanceInput: null,
+                selectedAccountType: null,
+                selectedClassCode: null,
+                selectedCurrencyISO: null
+            });
+    }
 
     render() {
         return <form onSubmit={e => e.preventDefault()}>
@@ -33,15 +48,15 @@ export class CreateAccountForm extends React.Component<CreateAccountProp, {}>{
             <label>
                 AccountType
             </label>
-            <select value={this.props.selectedAccountType != null ? this.props.selectedAccountType : ''} onChange={this.OnAccountTypeChangeHandler}>
-                {this.props.selectedAccountType == null ? <option value=''></option> : '' }
+            <select value={this.state.selectedAccountType != null ? this.state.selectedAccountType : ''} onChange={this.OnAccountTypeChangeHandler}>
+                {this.state.selectedAccountType == null ? <option value=''></option> : '' }
                 {this.renderOptions(this.props.accountTypes)}
             </select>
             <label>
                 Class Code
             </label>
-            <select value={this.props.selectedClassCode != null ? this.props.selectedClassCode : ""} onChange={this.OnClassCodeChangeHandler}>
-                {this.props.selectedClassCode == null ? <option value=''></option> : ''}
+            <select value={this.state.selectedClassCode != null ? this.state.selectedClassCode : ""} onChange={this.OnClassCodeChangeHandler}>
+                {this.state.selectedClassCode == null ? <option value=''></option> : ''}
                 {this.renderOptions(this.props.classCodes)}
             </select>
             <label>
@@ -51,8 +66,8 @@ export class CreateAccountForm extends React.Component<CreateAccountProp, {}>{
             <label>
                 Currency
             </label>
-            <select value={this.props.selectedCurrencyISO ? this.props.selectedCurrencyISO : "Select"} onChange={this.OnCurrencyChangeHandler}>
-                {this.props.selectedCurrencyISO == null ? <option value=''></option> : ''}
+            <select value={this.state.selectedCurrencyISO ? this.state.selectedCurrencyISO : "Select"} onChange={this.OnCurrencyChangeHandler}>
+                {this.state.selectedCurrencyISO == null ? <option value=''></option> : ''}
                 {this.renderOptions(this.props.currencies)}
             </select>
             <div>
@@ -71,7 +86,7 @@ export class CreateAccountForm extends React.Component<CreateAccountProp, {}>{
     //helper function
     private AppendState(newState: CreateAccountFormState)
     {
-        //this.setState({ ...this.state, ...newState });
+        this.setState({ ...this.state, ...newState });
     }
 
     OnAccountTypeChangeHandler = (event: React.FormEvent<HTMLSelectElement>) => {
@@ -81,7 +96,7 @@ export class CreateAccountForm extends React.Component<CreateAccountProp, {}>{
         //populars classCodes
         this.props.AccountTypeSelected(accountType); 
 
-        this.AppendState({ selectedAccountType: accountType, selectedClassCode: undefined });
+        this.AppendState({ selectedAccountType: accountType, selectedClassCode: null });
     }
 
     OnClassCodeChangeHandler = (event: React.FormEvent<HTMLSelectElement>) => {
@@ -89,7 +104,7 @@ export class CreateAccountForm extends React.Component<CreateAccountProp, {}>{
         let classCode = event.currentTarget.value;
         this.AppendState({ selectedClassCode: classCode });
 
-        this.props.ClassCodeSelected(classCode); 
+        //this.props.ClassCodeSelected(classCode); 
     }
 
     OnCurrencyChangeHandler = (event: React.FormEvent<HTMLSelectElement>) => {
@@ -97,28 +112,32 @@ export class CreateAccountForm extends React.Component<CreateAccountProp, {}>{
         let currencyISO = event.currentTarget.value;
         this.AppendState({ selectedCurrencyISO: currencyISO });
 
-        this.props.CurrencySelected(currencyISO); 
+        //this.props.CurrencySelected(currencyISO); 
     }
 
     BalanceChangeHandler = (event: React.FormEvent<HTMLInputElement>) => {
-        const balanceInput = (event.currentTarget.validity.valid) ? event.currentTarget.value : (this.props.balance + "");
+        const balanceInput = (event.currentTarget.validity.valid) ? event.currentTarget.value : (this.state.balanceInput + "");
 
-        this.props.BalanceUpdated(+balanceInput); 
+        //this.props.BalanceUpdated(+balanceInput); 
         this.AppendState({ balanceInput });
 
         return false; 
     }
 
     CreateClickHandler = (event: React.FormEvent<HTMLButtonElement>) => {
+
+        //validate input here bro 
+
         let account: CreateCustomerAccount = 
             {
-                accountType: this.props.selectedAccountType, 
-                classCode: this.props.selectedClassCode, 
-                currencyISO: this.props.selectedCurrencyISO, 
-                balance: this.props.balance,
+                accountType: this.state.selectedAccountType, 
+                classCode: this.state.selectedClassCode, 
+                currencyISO: this.state.selectedCurrencyISO, 
+                balance: +this.state.balanceInput,
                 customerId: null
         }; 
 
+       
         this.props.AddAccount(account);
 
     }

@@ -44,11 +44,6 @@ export interface AccountFormState {
     accountTypes: string[];
     classCodes: string[];
     currencies: string[];
-
-    selectedAccountType?: string;
-    selectedClassCode?: string;
-    selectedCurrencyISO?: string;
-    balance?: number; 
 }
 
 
@@ -124,38 +119,16 @@ interface ReceiveCurrenciesAction {
     currencies: string[];
 }
 
-interface SelectAccountTypeAction {
-    type: 'SELECT_ACCOUNT_TYPE';
-    accountType: string;
-}
-
-interface SelectClassCodeAction {
-    type: 'SELECT_CLASS_CODE';
-    classCode: string;
-}
-
-interface SelectCurrencyAction {
-    type: 'SELECT_CURRENCY';
-    currencyISO: string;
-}
-
-interface SetBalanceAction {
-    type: 'SET_BALANCE';
-    balance: number;
-}
-
 // Declare a 'discriminated union' type. This guarantees that all references to 'type' properties contain one of the
 // declared type strings (and not any other arbitrary string).
 type KnownAction =
     RequestCustomersAction | ReceiveCustomersAction
     | RequestCustomerDetailsAction | ReceiveCustomerDetailsAction
-    | RequestDeleteAccountAction | ReceiveDeleteAccountAction 
+    | RequestDeleteAccountAction | ReceiveDeleteAccountAction
     | RequestAddAccountAction | ReceiveAddAccountAction
     | RequestAccountTypesAction | ReceiveAccountTypesAction
     | RequestClassCodesAction | ReceiveClassCodesAction
-    | RequestCurrenciesAction | ReceiveCurrenciesAction
-    | SelectAccountTypeAction | SelectClassCodeAction
-    | SelectCurrencyAction | SetBalanceAction; 
+    | RequestCurrenciesAction | ReceiveCurrenciesAction;
 
 // ----------------
 // ACTION CREATORS - These are functions exposed to UI components that will trigger a state transition.
@@ -241,8 +214,8 @@ export const actionCreators = {
     requestClassCodes: (accountType: string): AppThunkAction<KnownAction> => (dispatch, getState) => {
         // Only load data if it's something we don't already have (and are not already loading)
 
-        let currentAccountType = getState().customer.accountForm.selectedAccountType;
-        if (currentAccountType != accountType) {
+        //let currentAccountType = getState().customer.accountForm.selectedAccountType;
+        //if (currentAccountType != accountType) {
         //if (!getState().accountForm.accountType != accountType) {
         let fetchTask = fetch(`api/const/classCode/${accountType}`)
             .then(response => response.json() as string[])
@@ -252,7 +225,7 @@ export const actionCreators = {
 
         addTask(fetchTask); // Ensure server-side prerendering waits for this to complete
         dispatch({ type: 'REQUEST_CLASS_CODES', accountType });
-        }
+        //}
     },
 
     requestCurrencies: (): AppThunkAction<KnownAction> => (dispatch, getState) => {
@@ -267,23 +240,7 @@ export const actionCreators = {
             addTask(fetchTask); // Ensure server-side prerendering waits for this to complete
             dispatch({ type: 'REQUEST_CURRENCIES' });
         }
-    },
-
-    selectAccountType: (accountType: string): AppThunkAction<KnownAction> => (dispatch, getState) => {
-        dispatch({ type: 'SELECT_ACCOUNT_TYPE', accountType });
-    },
-
-    selectClassCode: (classCode: string): AppThunkAction<KnownAction> => (dispatch, getState) => {
-        dispatch({ type: 'SELECT_CLASS_CODE', classCode });
-    },
-
-    selectCurrency: (currencyISO: string): AppThunkAction<KnownAction> => (dispatch, getState) => {
-        dispatch({ type: 'SELECT_CURRENCY', currencyISO });
-    },
-
-    setBalance: (balance: number): AppThunkAction<KnownAction> => (dispatch, getState) => {
-        dispatch({ type: 'SET_BALANCE', balance });
-    },
+    }
 }
 
 
@@ -386,39 +343,6 @@ export const reducer: Reducer<CustomerState> = (state: CustomerState, incomingAc
                     ...state.accountForm,
                     currencies: action.currencies
                 },
-            }
-        case 'SELECT_ACCOUNT_TYPE':
-            return {
-                ...state,
-                accountForm: {
-                    ...state.accountForm,
-                    selectedAccountType: action.accountType,
-                    selectedClassCode: null,
-                }
-            }
-        case 'SELECT_CLASS_CODE':
-            return {
-                ...state,
-                accountForm: {
-                    ...state.accountForm,
-                    selectedClassCode: action.classCode
-                }
-            }
-        case 'SELECT_CURRENCY':
-            return {
-                ...state,
-                accountForm: {
-                    ...state.accountForm,
-                    selectedCurrencyISO: action.currencyISO
-                }
-            }
-        case 'SET_BALANCE': 
-            return {
-                ...state,
-                accountForm: {
-                    ...state.accountForm,
-                    balance: action.balance
-                }
             }
         default:
             // The following line guarantees that every action in the KnownAction union has been covered by a case above
