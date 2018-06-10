@@ -36,9 +36,11 @@ namespace NG_Task.Controllers
                 return NotFound();
             }
 
+            const string localCurrencyISO = "EGP"; 
             CustomerDetailDto customerDto = AutoMapper.Mapper.Map<CustomerDetailDto>(customer);
 
-            customerDto.TotalBalance = customer.Accounts.Sum(a => a.Balance / a.Currency.Multiplier); 
+            decimal totalBalance = customer.Accounts.Sum(a => a.Balance / a.Currency.Multiplier); 
+            customerDto.TotalBalance = totalBalance.ToString("0000.00 " + localCurrencyISO);
 
             return Ok(customerDto);
         }

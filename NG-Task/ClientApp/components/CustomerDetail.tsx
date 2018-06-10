@@ -27,7 +27,7 @@ export class CustomerDetail extends React.Component<CustomerDetailProp, {}>{
                     Name: {this.props.customerDetail.name}
                 </div>
                 <div>
-                    Total Balance: {this.props.customerDetail.totalBalance} EGP
+                    Total Balance: {this.props.customerDetail.totalBalance}
                 </div>
                 <div>
                     OpenDate: {this.props.customerDetail.openDate}
