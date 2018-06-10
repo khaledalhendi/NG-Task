@@ -52,13 +52,13 @@ class Customer extends React.Component<CustomerProps, {}> {
     }
 
     render() {
-        return <div >
-            <div className=".col-3">
+        return <div className="container">
+            <div className="col-md-3 col-lg-3">
                 <CustomerList customers={this.props.customers}/>
             </div>
-
-            {this.props.customerDetail ? this.renderCustomerDetails() : "Select a customer please."}
-
+            <div className="col-md-9 col-lg-9">   
+                {this.props.customerDetail ? this.renderCustomerDetails() : "Select a customer please."}  
+            </div>
         </div>
     }
 
