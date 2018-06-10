@@ -53,15 +53,19 @@ namespace NG_Task
 
             AutoMapper.Mapper.Initialize(c => {
 
-            c.CreateMap<Customer, CustomerDetailDto>();
-            c.CreateMap<Customer, CustomerViewDto>();
+                c.CreateMap<Customer, CustomerDetailDto>().AfterMap((s, d) =>
+                {
+                    d.OpenDate = s.OpenDate.ToString("dd-MM-yyyy");
+                }); 
 
-            c.CreateMap<Account, AccountDto>();
-            c.CreateMap<AccountCreateDto, Account>();
+                c.CreateMap<Customer, CustomerViewDto>();
 
-            c.CreateMap<ClassCode, ClassCodeDto>().ConstructUsing(
-                (s) => { return new ClassCodeDto{ClassCode = s.Code, AccountType = s.AccountType }; }
-                );
+                c.CreateMap<Account, AccountDto>();
+                c.CreateMap<AccountCreateDto, Account>();
+
+                c.CreateMap<ClassCode, ClassCodeDto>().ConstructUsing(
+                    (s) => { return new ClassCodeDto{ClassCode = s.Code, AccountType = s.AccountType }; }
+                    );
             });
             app.UseStaticFiles();
 

@@ -11,6 +11,8 @@ namespace NG_Task.Models
         public int Id { get; set; }
         public string Name { get; set; }
         public string Branch { get; set; }
+        public string OpenDate { get; set; }
+
         public decimal TotalBalance { set; get; }
 
         public ICollection<AccountDto> Accounts { get; set; } = new List<AccountDto>();

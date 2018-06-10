@@ -22,6 +22,7 @@ export interface CustomerDetail {
     id: number;
     name: string;
     branch: string;
+    openDate: string;
     accounts: CustomerAccount[];
     totalBalance: number; 
 }
