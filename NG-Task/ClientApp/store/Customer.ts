@@ -13,13 +13,15 @@ export interface CustomerState {
 }
 
 export interface CustomerSummary{
-    name: string;
     id: number;
+    name: string;
+    branch: string;
 }
 
 export interface CustomerDetail {
     id: number;
     name: string;
+    branch: string;
     accounts: CustomerAccount[];
     totalBalance: number; 
 }

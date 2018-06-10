@@ -93,19 +93,23 @@ namespace NG_Task.Seed
             {
                 new Customer(){
                 Name = "Abdullah",
-                OpenDate = new DateTime(1990,7,5)
+                OpenDate = new DateTime(1990,7,5),
+                Branch = "Banking"
                 },
             new Customer(){
                 Name = "Ahmad",
-                OpenDate = new DateTime(2000,8,10)
+                OpenDate = new DateTime(2000,8,10),
+                Branch = "Medical"
                 },
             new Customer(){
                 Name = "Sherif",
-                OpenDate = new DateTime(2090,5,9)
+                OpenDate = new DateTime(2090,5,9),
+                Branch = "Business"
                 },
             new Customer(){
                 Name = "Yusri",
-                OpenDate = new DateTime(2015,1,6)
+                OpenDate = new DateTime(2015,1,6),
+                Branch = "Banking"
                 }
             };
         }
@@ -143,7 +147,7 @@ namespace NG_Task.Seed
                         Balance = (decimal)((2000 * r.Next(1,5)) + (1000 * r.NextDouble()) ),
                         CurrencyISO = currencies[r.Next(currencies.Length)].ISO,
                         AccountType = accountType.Type,
-                        ClassCode = classCodes[r.Next(3)].Code,
+                        ClassCode = classCodes[r.Next(classCodes.Length)].Code,
                     });
                 }
             }

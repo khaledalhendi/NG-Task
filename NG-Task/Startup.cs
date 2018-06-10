@@ -53,7 +53,7 @@ namespace NG_Task
 
             AutoMapper.Mapper.Initialize(c => {
 
-            c.CreateMap<Customer, CustomerDto>();
+            c.CreateMap<Customer, CustomerDetailDto>();
             c.CreateMap<Customer, CustomerViewDto>();
 
             c.CreateMap<Account, AccountDto>();

@@ -19,6 +19,11 @@ namespace NG_Task.Entities
         [Column(TypeName = "datetime2")]
         public DateTime OpenDate { get; set; }
 
+        [Required]
+        [StringLength(50)]
+        [Column(TypeName = "varchar(50)")]
+        public string Branch { get; set; }
+
         public ICollection<Account> Accounts { get; set; } = new HashSet<Account>();
     }
 }

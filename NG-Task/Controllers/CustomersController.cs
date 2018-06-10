@@ -36,7 +36,7 @@ namespace NG_Task.Controllers
                 return NotFound();
             }
 
-            CustomerDto customerDto = AutoMapper.Mapper.Map<CustomerDto>(customer);
+            CustomerDetailDto customerDto = AutoMapper.Mapper.Map<CustomerDetailDto>(customer);
 
             customerDto.TotalBalance = customer.Accounts.Sum(a => a.Balance / a.Currency.Multiplier); 
 
