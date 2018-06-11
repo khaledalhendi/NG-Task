@@ -7,6 +7,8 @@ import { AppThunkAction } from './';
 
 export interface CustomerState {
     isLoading: boolean; 
+    isLoadingCustomerDetail: boolean 
+    selectedCustomer: number; 
     customerDetail?: CustomerDetail; 
     customers: CustomerSummary[]; 
     accountForm?: AccountFormState; 
@@ -251,7 +253,10 @@ export const actionCreators = {
 // REDUCER - For a given state and action, returns the new state. To support time travel, this must not mutate the old state.
 
 const unloadedState: CustomerState = {
-    customers: [], isLoading: false,
+    isLoading: false,
+    isLoadingCustomerDetail: false,
+    selectedCustomer: null,
+    customers: [],
     accountForm: {
         accountTypes: [],
         classCodes: [],
@@ -277,12 +282,15 @@ export const reducer: Reducer<CustomerState> = (state: CustomerState, incomingAc
         case 'REQUEST_CUSTOMER':
             return { 
                 ...state,
-                customerDetail: state.customerDetail,
+                isLoadingCustomerDetail: true,
+                customerDetail: null, 
+                selectedCustomer: action.customerId,
                 isLoading: true
             };
         case 'RECEIVE_CUSTOMER':
                 return {
                     ...state,
+                    isLoadingCustomerDetail: false,
                     customerDetail: action.customerDetail,
                     isLoading: false 
             };

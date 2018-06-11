@@ -22,10 +22,8 @@ class Customer extends React.Component<CustomerProps, {}> {
 
         let customerId = parseInt(this.props.match.params.customerId);
 
-        if (customerId){
-            this.props.requestCustomerDetails(customerId);
-            this.props.requestAccountTypes();
-            this.props.requestCurrencies(); 
+        if (customerId) {
+            this.handleCustomerId(customerId);
         }
 
     }
@@ -34,20 +32,19 @@ class Customer extends React.Component<CustomerProps, {}> {
         // This method runs when incoming props (e.g., route params) change
         let customerId = parseInt(nextProps.match.params.customerId);
 
-        if (customerId)
+        if (customerId && customerId != this.props.selectedCustomer && customerId != nextProps.selectedCustomer)
         {
-            if (this.props.customerDetail && this.props.customerDetail.id == customerId) {
+            this.handleCustomerId(customerId); 
+        }
+    }
 
-            } else {
-                this.props.requestCustomerDetails(customerId);
-            }
 
-            if (this.props.accountForm.accountTypes == null || this.props.accountForm.accountTypes.length == 0) {
-                this.props.requestAccountTypes();
-            }
-            if (this.props.accountForm.accountTypes == null || this.props.accountForm.accountTypes.length == 0) {
-                this.props.requestCurrencies(); 
-            }
+    ///Handles customerId changes to request a new customer 
+    private handleCustomerId(customerId: number) {
+        if (!this.props.customerDetail || this.props.customerDetail.id != customerId) {
+            this.props.requestCustomerDetails(customerId);
+            this.props.requestAccountTypes();
+            this.props.requestCurrencies();
         }
     }
 
@@ -101,7 +98,10 @@ const mapStateToProps = (state: ApplicationState): CustomerProps => {
         customers: state.customer.customers,
         customerDetail: state.customer.customerDetail,
         isLoading: state.customer.isLoading,
-        accountForm: state.customer.accountForm
+        accountForm: state.customer.accountForm,
+        selectedCustomer: state.customer.selectedCustomer,
+        isLoadingCustomerDetailc: state.customer.isLoadingCustomerDetail,
+
     } as any
 };
 
