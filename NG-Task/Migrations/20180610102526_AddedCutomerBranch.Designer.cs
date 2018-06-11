@@ -11,9 +11,10 @@ using System;
 namespace NGTask.Migrations
 {
     [DbContext(typeof(NGContext))]
-    partial class NGContextModelSnapshot : ModelSnapshot
+    [Migration("20180610102526_AddedCutomerBranch")]
+    partial class AddedCutomerBranch
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

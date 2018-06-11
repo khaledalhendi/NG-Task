@@ -11,9 +11,10 @@ using System;
 namespace NGTask.Migrations
 {
     [DbContext(typeof(NGContext))]
-    partial class NGContextModelSnapshot : ModelSnapshot
+    [Migration("20180606073828_AddedClassCodeToAccount")]
+    partial class AddedClassCodeToAccount
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -105,11 +106,6 @@ namespace NGTask.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd();
-
-                    b.Property<string>("Branch")
-                        .IsRequired()
-                        .HasColumnType("varchar(50)")
-                        .HasMaxLength(50);
 
                     b.Property<string>("Name")
                         .IsRequired()

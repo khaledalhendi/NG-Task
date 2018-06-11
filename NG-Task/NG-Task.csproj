@@ -5,6 +5,8 @@
     <TypeScriptCompileBlocked>true</TypeScriptCompileBlocked>
     <TypeScriptToolsVersion>2.8</TypeScriptToolsVersion>
     <IsPackable>false</IsPackable>
+    <AssemblyName>NG_Task</AssemblyName>
+    <RootNamespace>NG_Task</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>
@@ -22,14 +24,15 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Remove="Entities\NGContextFactory.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
+    <None Remove="ClientApp\components\Customer.tsx" />
     <None Remove="ClientApp\components\CustomerDetail.tsx" />
+    <None Remove="ClientApp\components\FetchData.tsx" />
+    <None Remove="ClientApp\components\Home.tsx" />
+    <None Remove="ClientApp\store\WeatherForecasts.ts" />
   </ItemGroup>
 
   <ItemGroup>
+    <TypeScriptCompile Include="ClientApp\components\Customer.tsx" />
     <TypeScriptCompile Include="ClientApp\components\CustomerDetail.tsx" />
   </ItemGroup>
 

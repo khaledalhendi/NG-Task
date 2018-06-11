@@ -9,11 +9,14 @@
     "sourceMap": true,
     "skipDefaultLibCheck": true,
     "strict": false,
-    "lib": ["es6", "dom"],
-    "types": ["webpack-env"]
+    "lib": [ "es6", "dom" ],
+    "types": [ "webpack-env" ]
   },
+  "include": [
+    "**/*"
+  ],
   "exclude": [
-      "bin",
-      "node_modules"
+    "bin",
+    "node_modules"
   ]
 }

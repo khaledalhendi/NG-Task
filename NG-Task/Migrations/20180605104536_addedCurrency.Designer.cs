@@ -11,9 +11,10 @@ using System;
 namespace NGTask.Migrations
 {
     [DbContext(typeof(NGContext))]
-    partial class NGContextModelSnapshot : ModelSnapshot
+    [Migration("20180605104536_addedCurrency")]
+    partial class addedCurrency
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -25,16 +26,8 @@ namespace NGTask.Migrations
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd();
 
-                    b.Property<string>("AccountType")
-                        .IsRequired()
-                        .HasColumnType("char(2)");
-
                     b.Property<decimal>("Balance")
                         .HasColumnType("decimal(21,6)");
-
-                    b.Property<string>("ClassCode")
-                        .IsRequired()
-                        .HasColumnType("char(3)");
 
                     b.Property<string>("CurrencyISO")
                         .IsRequired()
@@ -44,43 +37,11 @@ namespace NGTask.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("AccountType");
-
-                    b.HasIndex("ClassCode");
-
                     b.HasIndex("CurrencyISO");
 
                     b.HasIndex("CustomerId");
 
                     b.ToTable("Accounts");
-                });
-
-            modelBuilder.Entity("NG_Task.Entities.AccountType", b =>
-                {
-                    b.Property<string>("Type")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("char(2)");
-
-                    b.HasKey("Type");
-
-                    b.ToTable("AccountTypes");
-                });
-
-            modelBuilder.Entity("NG_Task.Entities.ClassCode", b =>
-                {
-                    b.Property<string>("Code")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("char(3)");
-
-                    b.Property<string>("AccountType")
-                        .IsRequired()
-                        .HasColumnType("char(2)");
-
-                    b.HasKey("Code");
-
-                    b.HasIndex("AccountType");
-
-                    b.ToTable("ClassCodes");
                 });
 
             modelBuilder.Entity("NG_Task.Entities.Currency", b =>
@@ -94,7 +55,7 @@ namespace NGTask.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("varchar(25)");
+                        .HasColumnType("varchar(10)");
 
                     b.HasKey("ISO");
 
@@ -105,11 +66,6 @@ namespace NGTask.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd();
-
-                    b.Property<string>("Branch")
-                        .IsRequired()
-                        .HasColumnType("varchar(50)")
-                        .HasMaxLength(50);
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -126,16 +82,6 @@ namespace NGTask.Migrations
 
             modelBuilder.Entity("NG_Task.Entities.Account", b =>
                 {
-                    b.HasOne("NG_Task.Entities.AccountType", "Type")
-                        .WithMany()
-                        .HasForeignKey("AccountType")
-                        .OnDelete(DeleteBehavior.Cascade);
-
-                    b.HasOne("NG_Task.Entities.ClassCode", "Code")
-                        .WithMany()
-                        .HasForeignKey("ClassCode")
-                        .OnDelete(DeleteBehavior.Cascade);
-
                     b.HasOne("NG_Task.Entities.Currency", "Currency")
                         .WithMany()
                         .HasForeignKey("CurrencyISO")
@@ -144,14 +90,6 @@ namespace NGTask.Migrations
                     b.HasOne("NG_Task.Entities.Customer", "Customer")
                         .WithMany("Accounts")
                         .HasForeignKey("CustomerId")
-                        .OnDelete(DeleteBehavior.Cascade);
-                });
-
-            modelBuilder.Entity("NG_Task.Entities.ClassCode", b =>
-                {
-                    b.HasOne("NG_Task.Entities.AccountType", "Type")
-                        .WithMany("ClassCodes")
-                        .HasForeignKey("AccountType")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 #pragma warning restore 612, 618

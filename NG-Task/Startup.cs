@@ -28,7 +28,7 @@ namespace NG_Task
         {
             services.AddMvc();
 
-            string connectionString = "Server=(localdb)\\mssqllocaldb;Database=NGCore;Trusted_Connection=True;";
+            string connectionString = "Server=(localdb)\\mssqllocaldb;Database=NGApp;Trusted_Connection=True;";
             services.AddDbContext<NGContext>(o => o.UseSqlServer(connectionString));
         }
 
@@ -53,12 +53,23 @@ namespace NG_Task
 
             AutoMapper.Mapper.Initialize(c => {
 
-                c.CreateMap<Customer, CustomerDto>();
+                c.CreateMap<Customer, CustomerDetailDto>().AfterMap((s, d) =>
+                {
+                    d.OpenDate = s.OpenDate.ToString("dd-MM-yyyy");
+                }); 
+
                 c.CreateMap<Customer, CustomerViewDto>();
 
-                c.CreateMap<Account, AccountDto>();
-
+                c.CreateMap<Account, AccountDto>().AfterMap((s, d) => 
+                {
+                    d.Balance = s.Balance.ToString("0000.00");
+                });
                 c.CreateMap<AccountCreateDto, Account>();
+
+                c.CreateMap<ClassCode, ClassCodeDto>().AfterMap((s, d) =>
+                {
+                    d.ClassCode = s.Code;
+                });
             });
             app.UseStaticFiles();
 

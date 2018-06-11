@@ -9,10 +9,10 @@ namespace NG_Task.Controllers
 {
     public class HomeController : Controller
     {
-        [Route("/")]
-        [Route("Home")]
-        [Route("Index")]
-        public IActionResult Index()
+        [Route("/{id?}")]
+        [Route("Home/{id?}")]
+        [Route("Index/{id?}")]
+        public IActionResult Index(int? id)
         {
             return View();
         }

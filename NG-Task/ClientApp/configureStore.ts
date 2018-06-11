@@ -13,12 +13,12 @@ export default function configureStore(history: History, initialState?: Applicat
     const createStoreWithMiddleware = compose(
         applyMiddleware(thunk, routerMiddleware(history)),
         devToolsExtension ? devToolsExtension() : <S>(next: StoreEnhancerStoreCreator<S>) => next
-    )(createStore);
+    )(createStore) as (...any) => any;
 
     // Combine all reducers and instantiate the app-wide store instance
     const allReducers = buildRootReducer(reducers);
     const store = createStoreWithMiddleware(allReducers, initialState) as Store<ApplicationState>;
-
+    
     // Enable Webpack hot module replacement for reducers
     if (module.hot) {
         module.hot.accept('./store', () => {

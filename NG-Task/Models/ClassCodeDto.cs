@@ -5,10 +5,8 @@ using System.Threading.Tasks;
 
 namespace NG_Task.Models
 {
-    public class AccountCreateDto
+    public class ClassCodeDto
     {
-        public float Balance { get; set; }
-        public string CurrencyISO { get; set; }
         public string AccountType { get; set; }
         public string ClassCode { get; set; }
     }

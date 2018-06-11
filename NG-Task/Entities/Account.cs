@@ -20,24 +20,25 @@ namespace NG_Task.Entities
         [Required]
         public int CustomerId { get; set; }
 
-        //[Required]
-        //[StringLength(3)]
-        //public string CurrencyId { get; set; }
-        //public virtual Currency Currency { get; set; }
+        [Required]
+        [Column(TypeName ="char(3)")]
+        public string CurrencyISO { get; set; }
 
-        //[Required]
-        //[StringLength(3)]
-        //public string ClassCode { get; set; }
+        [ForeignKey("CurrencyISO")]
+        public Currency Currency { get; set; }
 
-        //[ForeignKey("ClassCodeValue")]
-        //public ClassCode ClassCode { get; set; }
+        [Required]
+        [Column(TypeName = "char(2)")]
+        public string AccountType { get; set; }
 
-        //[Required]
-        //[StringLength(2)]
-        //public string Type { get; set; }
+        [ForeignKey("AccountType")]
+        public AccountType Type { get; set; }
 
-        //[ForeignKey("Type")]
-        //public AccountType AccountType { get; set; }
+        [Required]
+        [Column(TypeName = "char(3)")]
+        public string ClassCode { get; set; }
 
+        [ForeignKey("ClassCode")]
+        public ClassCode Code { get; set; }
     }
 }

@@ -29,14 +29,18 @@ namespace NG_Task.Controllers
         [HttpGet("{customerId}", Name = "CustomerDetails")]
         public IActionResult GetCustomer(int customerId)
         {
-            Customer customer = NGContext.Customers.Include(c => c.Accounts).FirstOrDefault(c => c.Id == customerId);
+            Customer customer = NGContext.Customers.Include(c => c.Accounts).ThenInclude(a => a.Currency).FirstOrDefault(c => c.Id == customerId);
 
             if (customer == null)
             {
                 return NotFound();
             }
 
-            CustomerDto customerDto = AutoMapper.Mapper.Map<CustomerDto>(customer);
+            const string localCurrencyISO = "EGP"; 
+            CustomerDetailDto customerDto = AutoMapper.Mapper.Map<CustomerDetailDto>(customer);
+
+            decimal totalBalance = customer.Accounts.Sum(a => a.Balance / a.Currency.Multiplier); 
+            customerDto.TotalBalance = totalBalance.ToString("0000.00 " + localCurrencyISO);
 
             return Ok(customerDto);
         }
@@ -62,9 +66,7 @@ namespace NG_Task.Controllers
             NGContext.Accounts.Add(account);
             NGContext.SaveChanges();
 
-
-            AccountDto accountDto = AutoMapper.Mapper.Map<AccountDto>(account);
-            return CreatedAtRoute("CustomerDetails", new { customerId }, accountDto);
+            return GetCustomer(customerId);
         }
 
         [HttpDelete("{customerId}/account/{accountId}")]
@@ -87,8 +89,8 @@ namespace NG_Task.Controllers
             NGContext.Accounts.Remove(account);
             NGContext.SaveChanges();
 
-            AccountDto accountDto = AutoMapper.Mapper.Map<AccountDto>(account);
-            return CreatedAtRoute("CustomerDetails", new { customerId }, accountDto);
+
+            return GetCustomer(customerId); 
         }
 
 

@@ -1,33 +1,54 @@
-﻿import * as React from 'react';
-import { NavLink, Link } from 'react-router-dom';
-import { CustomerListProp } from '../store';
+﻿import { NavLink, Link } from 'react-router-dom';
+import * as React from 'react';
+import { RouteComponentProps } from 'react-router-dom';
+import { ApplicationState } from '../store';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
+import { CustomerSummary } from "../store/Customer";
+import Search from 'react-search-box';
 
-export const CustomerList = (props: CustomerListProp) => {
-    return <div className='main-nav'>
-        <div className='navbar navbar-inverse'>
-            <div className='navbar-header'>
-                <button type='button' className='navbar-toggle' data-toggle='collapse' data-target='.navbar-collapse'>
-                    <span className='sr-only'>Toggle navigation</span>
-                    <span className='icon-bar'></span>
-                    <span className='icon-bar'></span>
-                    <span className='icon-bar'></span>
-                </button>
-                <Link className='navbar-brand' to={'/'}>NG_Task</Link>
-            </div>
-            <div className='clearfix'></div>
-            <div className='navbar-collapse collapse'>
-                <ul className='nav navbar-nav'>
 
-                    {props.customers.map(c => 
-                        <NavLink exact to={'/customer/' + c.id } activeClassName='active'>
-                            <span className='glyphicon glyphicon-home'></span> {c.name }
-                            <div>
-                                {c.id}
-                            </div>
-                        </NavLink>
-                        )}; 
-                </ul>
+interface CustomerListPros
+{
+    customers: CustomerSummary[]; 
+}
+
+export class CustomerList extends React.Component<CustomerListPros, {}>{
+    handleChange(value) {
+        console.log(value);
+    }
+    renderNgSearchBar() {
+        return (<div className="app">
+            <div className="app__content">
+                <div className="content__search content__search--with-full_name">
+                
+                    <div className="search__component">
+                        <Search
+                            data={this.props.customers}
+                            onChange={this.handleChange.bind(this)}
+                            placeholder="Search By Customer RIM/Name"
+                            class="search-class"
+                            searchKey="name"
+                        />
+                    
+                    </div>
+                </div>
             </div>
-        </div>
-    </div>;
+        </div>);
+    }
+
+    render() {
+       
+        return <div>
+            {this.renderNgSearchBar()}
+            Customers: {this.props.customers.length}
+            <ul>
+                {this.props.customers.map(c =>
+                    <li key={c.id}>
+                        <Link to={`/${c.id}`}>{c.name}</Link>
+                    </li>
+                )}
+            </ul>
+        </div>;
+    };
 }
