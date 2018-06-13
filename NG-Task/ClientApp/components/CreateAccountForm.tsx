@@ -71,7 +71,7 @@ export class CreateAccountForm extends React.Component<CreateAccountProp, Create
                 {this.renderOptions(this.props.currencies)}
             </select>
             <div>
-                <input type="submit" value="Create" onClick={this.CreateClickHandler} />
+                <input type="submit" className="btn btn-success" value="Create" onClick={this.CreateClickHandler} />
             </div>
         </form>;
     };
@@ -124,7 +124,7 @@ export class CreateAccountForm extends React.Component<CreateAccountProp, Create
         return false; 
     }
 
-    CreateClickHandler = (event: React.FormEvent<HTMLButtonElement>) => {
+    CreateClickHandler = (event: React.FormEvent<HTMLInputElement>) => {
 
         //validate input here bro 
 
