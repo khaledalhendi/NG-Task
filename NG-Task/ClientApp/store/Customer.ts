@@ -291,8 +291,7 @@ export const reducer: Reducer<CustomerState> = (state: CustomerState, incomingAc
         case 'REQUEST_CUSTOMER':
             return { 
                 ...state,
-                isLoadingCustomerDetail: true,
-                customerDetail: null, 
+                isLoadingCustomerDetail: true, 
                 selectedCustomer: action.customerId,
                 isLoading: true
             };

@@ -53,6 +53,9 @@ class Customer extends React.Component<CustomerProps, {}> {
 
     render() {
         return <div className="container">
+
+            {this.props.isLoading ? this.renderIsLoading() : ""}
+
             <div className="col-md-3 col-lg-3">
                 <CustomerList customers={this.props.customers}/>
             </div>
@@ -65,13 +68,17 @@ class Customer extends React.Component<CustomerProps, {}> {
     renderCustomerDetails()
     {
         return <div>
-            <div className=".col-9">
+            <div>
                 <CustomerDetail customerDetail={this.props.customerDetail} onDelete={this.accountOnDeleteHandler} />
             </div>
             <div>
                 <CreateAccountForm {...this.props.accountForm} {...this.formActions} />
             </div>
         </div>;
+    }
+
+    renderIsLoading() {
+        return "Loading..."; 
     }
 
     accountOnDeleteHandler = (accountId: number) => {
