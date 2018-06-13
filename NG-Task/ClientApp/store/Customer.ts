@@ -75,6 +75,10 @@ interface ReceiveCustomerDetailsAction {
     customerDetail: CustomerDetail; 
 }
 
+interface ClearCustomerDetailsAction {
+    type: 'CLEAR_CUSTOMER'; 
+}
+
 interface RequestDeleteAccountAction {
     type: 'REQUEST_DELETE_ACCOUNT';
     customerId: number; 
@@ -128,7 +132,7 @@ interface ReceiveCurrenciesAction {
 // declared type strings (and not any other arbitrary string).
 type KnownAction =
     RequestCustomersAction | ReceiveCustomersAction
-    | RequestCustomerDetailsAction | ReceiveCustomerDetailsAction
+    | RequestCustomerDetailsAction | ReceiveCustomerDetailsAction | ClearCustomerDetailsAction
     | RequestDeleteAccountAction | ReceiveDeleteAccountAction
     | RequestAddAccountAction | ReceiveAddAccountAction
     | RequestAccountTypesAction | ReceiveAccountTypesAction
@@ -168,6 +172,11 @@ export const actionCreators = {
             addTask(fetchTask); // Ensure server-side prerendering waits for this to complete
             dispatch({ type: 'REQUEST_CUSTOMER', customerId: customerId });
         }
+    },
+
+    clearCustomerDetails: (): AppThunkAction<KnownAction> => (dispatch, getState) => {
+
+        dispatch({ type: 'CLEAR_CUSTOMER'}); 
     },
 
     deleteAccount: (customerId: number, accountId: number): AppThunkAction<KnownAction> => (dispatch, getState) => {
@@ -294,6 +303,11 @@ export const reducer: Reducer<CustomerState> = (state: CustomerState, incomingAc
                     customerDetail: action.customerDetail,
                     isLoading: false 
             };
+        case 'CLEAR_CUSTOMER':
+            return {
+                ...state, 
+                customerDetail: null, 
+            }
         case 'REQUEST_DELETE_ACCOUNT':
             return {
                 ...state, 

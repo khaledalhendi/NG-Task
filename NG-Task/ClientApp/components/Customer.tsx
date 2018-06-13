@@ -25,16 +25,19 @@ class Customer extends React.Component<CustomerProps, {}> {
         if (customerId) {
             this.handleCustomerId(customerId);
         }
-
     }
 
     componentWillReceiveProps(nextProps: CustomerProps) {
         // This method runs when incoming props (e.g., route params) change
         let customerId = parseInt(nextProps.match.params.customerId);
 
-        if (customerId && customerId != this.props.selectedCustomer && customerId != nextProps.selectedCustomer)
-        {
-            this.handleCustomerId(customerId); 
+        if (customerId) {
+            //only request customer if id has not be handled
+            if (customerId != this.props.selectedCustomer && customerId != nextProps.selectedCustomer) {
+                this.handleCustomerId(customerId);
+            }
+        } else  {
+            this.props.clearCustomerDetails(); 
         }
     }
 
@@ -109,6 +112,7 @@ const mapDispatchToProps = (dispatch: any): any => {
     return bindActionCreators({
         requestCustomers: CustomerState.actionCreators.requestCustomers,
         requestCustomerDetails: CustomerState.actionCreators.requestCustomerDetails,
+        clearCustomerDetails: CustomerState.actionCreators.clearCustomerDetails,
         deleteAccount: CustomerState.actionCreators.deleteAccount,
         addAccount: CustomerState.actionCreators.addAccount,
         requestAccountTypes: CustomerState.actionCreators.requestAccountTypes,
