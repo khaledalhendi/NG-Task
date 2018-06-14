@@ -4,6 +4,9 @@ import { ApplicationState } from "../store";
 import { bindActionCreators } from "redux";
 import { connect } from 'react-redux';
 import { CreateCustomerAccount } from "../store/Customer";
+import { findDOMNode } from 'react-dom';
+import { Form, FormGroup, ControlLabel, InputGroup, FormControl, Col, DropdownButton, MenuItem } from 'react-bootstrap';
+import configureStore from '../configureStore';
 
 type CreateAccountProp =
     CreateAccount.AccountFormState         // ... state we've requested from the Redux store
@@ -25,8 +28,6 @@ export class CreateAccountForm extends React.Component<CreateAccountProp, Create
     constructor(props: CreateAccountProp)
     {
         super(props); 
-
-       
     }
 
     componentWillMount()
@@ -41,39 +42,53 @@ export class CreateAccountForm extends React.Component<CreateAccountProp, Create
     }
 
     render() {
-        return <form onSubmit={e => e.preventDefault()}>
+        return <Form className="panel" onSubmit={e => e.preventDefault()}>
             <div>
                 Create Account
             </div>
-            <label>
-                AccountType
-            </label>
-            <select value={this.state.selectedAccountType != null ? this.state.selectedAccountType : ''} onChange={this.OnAccountTypeChangeHandler}>
-                {this.state.selectedAccountType == null ? <option value=''></option> : '' }
+            <FormGroup className="panel">
+            <ControlLabel>AccountType</ControlLabel>
+                <select className="form-control" value={this.state.selectedAccountType != null ? this.state.selectedAccountType : ''}
+                    onChange={this.OnAccountTypeChangeHandler}>
+                {this.state.selectedAccountType == null ? <option value=''></option> : ''}
                 {this.renderOptions(this.props.accountTypes)}
-            </select>
-            <label>
+                </select>
+            </FormGroup>
+            <FormGroup>
+                <ControlLabel>
                 Class Code
-            </label>
-            <select value={this.state.selectedClassCode != null ? this.state.selectedClassCode : ""} onChange={this.OnClassCodeChangeHandler}>
+            </ControlLabel>
+                <select className="form-control" value={this.state.selectedClassCode != null ? this.state.selectedClassCode : ""}
+                    onChange={this.OnClassCodeChangeHandler}>
                 {this.state.selectedClassCode == null ? <option value=''></option> : ''}
                 {this.renderOptions(this.props.classCodes)}
-            </select>
-            <label>
-                Balance
-            </label>
-            <input type="text" onSubmit={e => { e.defaultPrevented; e.stopPropagation; }} placeholder="balance" pattern="\\d*\.\\d{0,3}" onInput={this.BalanceChangeHandler} />
-            <label>
-                Currency
-            </label>
-            <select value={this.state.selectedCurrencyISO ? this.state.selectedCurrencyISO : "Select"} onChange={this.OnCurrencyChangeHandler}>
-                {this.state.selectedCurrencyISO == null ? <option value=''></option> : ''}
-                {this.renderOptions(this.props.currencies)}
-            </select>
+                </select>
+            </FormGroup>
+            <FormGroup>
+                <ControlLabel>Balance</ControlLabel>
+                 <InputGroup>
+                    <InputGroup.Addon>
+                        $
+                    </InputGroup.Addon>
+                    <input className="form-control" type="text" value={this.state.balanceInput ? this.state.balanceInput : ""}
+                        placeholder="balance" pattern="\\d+(\\\.\\d{0,3})?"
+                        onInput={this.BalanceChangeHandler}
+                        onKeyPress={this.OnBalanceSubmitHandler}
+                        />
+                    <InputGroup.Addon>
+                        <select className=""
+                            value={this.state.selectedCurrencyISO ? this.state.selectedCurrencyISO : "Select"}
+                            onChange={this.OnCurrencyChangeHandler}>
+                            {this.state.selectedCurrencyISO == null ? <option value=''></option> : ''}
+                            {this.renderOptions(this.props.currencies)}
+                        </select>
+                    </InputGroup.Addon>
+                </InputGroup>
+            </FormGroup>
             <div>
-                <input type="submit" className="btn btn-success" value="Create" onClick={this.CreateClickHandler} />
+                <button className="btn btn-success center-block" onClick={this.CreateClickHandler}>Create</button>
             </div>
-        </form>;
+        </Form>;
     };
 
     renderOptions(options: string[])
@@ -89,9 +104,15 @@ export class CreateAccountForm extends React.Component<CreateAccountProp, Create
         this.setState({ ...this.state, ...newState });
     }
 
-    OnAccountTypeChangeHandler = (event: React.FormEvent<HTMLSelectElement>) => {
+    OnBalanceSubmitHandler = (target) => {
+        let enterKeyCode = 13; 
+        if (target.charCode == enterKeyCode) {
+            target.preventDefault();
+        }
+    }
 
-        let accountType = event.currentTarget.value; 
+    OnAccountTypeChangeHandler = (event: React.FormEvent<HTMLSelectElement>) => {
+        let accountType: string = "" + event.currentTarget.value;
 
         //populars classCodes
         this.props.AccountTypeSelected(accountType); 
@@ -116,7 +137,10 @@ export class CreateAccountForm extends React.Component<CreateAccountProp, Create
     }
 
     BalanceChangeHandler = (event: React.FormEvent<HTMLInputElement>) => {
-        const balanceInput = (event.currentTarget.validity.valid) ? event.currentTarget.value : (this.state.balanceInput + "");
+        event.preventDefault(); 
+        let input: HTMLInputElement = event.currentTarget;
+
+        const balanceInput = (input.validity.valid) ? input.value : (this.state.balanceInput);
 
         //this.props.BalanceUpdated(+balanceInput); 
         this.AppendState({ balanceInput });
@@ -124,10 +148,9 @@ export class CreateAccountForm extends React.Component<CreateAccountProp, Create
         return false; 
     }
 
-    CreateClickHandler = (event: React.FormEvent<HTMLInputElement>) => {
+    CreateClickHandler = (event: React.FormEvent<HTMLButtonElement>) => {
 
         //validate input here bro 
-
         let account: CreateCustomerAccount = 
             {
                 accountType: this.state.selectedAccountType, 
@@ -135,11 +158,9 @@ export class CreateAccountForm extends React.Component<CreateAccountProp, Create
                 currencyISO: this.state.selectedCurrencyISO, 
                 balance: +this.state.balanceInput,
                 customerId: null
-        }; 
+            }; 
 
-       
         this.props.AddAccount(account);
-
     }
 
 

@@ -35,17 +35,6 @@ export class CustomerList extends React.Component<CustomerListPros, {}>{
         </div>);
     }
 
-    redirectToCostomer(cusomerId: number) {
-        console.log("clikced");
-        var path = `/${cusomerId}`;
-
-        <Redirect to={path} />
-    }
-
-    handleClick(e) {
-        
-    }
-
     render() {
         return <div>
             {this.renderNgSearchBar()}
