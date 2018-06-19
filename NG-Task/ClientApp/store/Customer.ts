@@ -306,6 +306,7 @@ export const reducer: Reducer<CustomerState> = (state: CustomerState, incomingAc
             return {
                 ...state, 
                 customerDetail: null, 
+                selectedCustomer: null
             }
         case 'REQUEST_DELETE_ACCOUNT':
             return {
