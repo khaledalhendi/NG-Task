@@ -12,7 +12,7 @@ import { CreateAccountForm } from "./CreateAccountForm";
 type CustomerProps =
     CustomerState.CustomerState        // ... state we've requested from the Redux store
     & typeof CustomerState.actionCreators      // ... plus action creators we've requested
-    & RouteComponentProps<{ customerId: string }>; // ... plus incoming routing parameters
+    & RouteComponentProps<{ customerId: string, pageIndex?: string}>; // ... plus incoming routing parameters
 
 class Customer extends React.Component<CustomerProps, {}> {
 
@@ -21,9 +21,14 @@ class Customer extends React.Component<CustomerProps, {}> {
         this.props.requestCustomers(); 
 
         let customerId = parseInt(this.props.match.params.customerId);
+        let pageIndex = parseInt(this.props.match.params.pageIndex);
+
+        if (!pageIndex) {
+            pageIndex = 1; 
+        }
 
         if (customerId) {
-            this.handleCustomerId(customerId);
+            this.handleCustomerId(customerId, pageIndex);
         }
     }
 
@@ -43,9 +48,9 @@ class Customer extends React.Component<CustomerProps, {}> {
 
 
     ///Handles customerId changes to request a new customer 
-    private handleCustomerId(customerId: number) {
+    private handleCustomerId(customerId: number, pageIndex: number = 1) {
         if (!this.props.customerDetail || this.props.customerDetail.id != customerId) {
-            this.props.requestCustomerDetails(customerId);
+            this.props.requestCustomerDetails(customerId, pageIndex);
             this.props.requestAccountTypes();
             this.props.requestCurrencies();
         }

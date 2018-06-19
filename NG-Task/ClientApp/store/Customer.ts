@@ -26,7 +26,10 @@ export interface CustomerDetail {
     branch: string;
     openDate: string;
     accounts: CustomerAccount[];
+    accountLength: number;
     totalBalance: number; 
+    pageIndex: number; 
+    pageSize: number; 
 }
 
 export interface CustomerAccount {
@@ -68,11 +71,12 @@ interface ReceiveCustomersAction {
 interface RequestCustomerDetailsAction {
     type: 'REQUEST_CUSTOMER';
     customerId: number;
+    pageIndex: number; 
 }
 
 interface ReceiveCustomerDetailsAction {
     type: 'RECEIVE_CUSTOMER';
-    customerDetail: CustomerDetail; 
+    customerDetail: CustomerDetail;  
 }
 
 interface ClearCustomerDetailsAction {
@@ -159,18 +163,18 @@ export const actionCreators = {
         }
     },
 
-    requestCustomerDetails: (customerId: number): AppThunkAction<KnownAction> => (dispatch, getState) => {
+    requestCustomerDetails: (customerId: number, pageIndex: number = 1): AppThunkAction<KnownAction> => (dispatch, getState) => {
         // Only load data if it's something we don't already have (and are not already loading)
 
         if (!getState().customer.customerDetail || customerId !== getState().customer.customerDetail.id) {
-            let fetchTask = fetch(`api/customers/${customerId}`)
+            let fetchTask = fetch(`api/customers/${customerId}/${pageIndex}`)
                 .then(response => response.json() as Promise<CustomerDetail>)
                 .then(data => {
                     dispatch({ type: 'RECEIVE_CUSTOMER', customerDetail: data });
                 });
 
             addTask(fetchTask); // Ensure server-side prerendering waits for this to complete
-            dispatch({ type: 'REQUEST_CUSTOMER', customerId: customerId });
+            dispatch({ type: 'REQUEST_CUSTOMER', customerId, pageIndex });
         }
     },
 

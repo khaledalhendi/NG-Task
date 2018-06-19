@@ -5,6 +5,7 @@ import { connect } from 'react-redux';
 import * as CustomerState from '../store/Customer';
 import { bindActionCreators } from 'redux';
 import { CreateAccountForm } from "./CreateAccountForm";
+import configureStore from '../configureStore';
 
 // At runtime, Redux will merge together...
 interface CustomerDetailProp {
@@ -34,8 +35,8 @@ export class CustomerDetail extends React.Component<CustomerDetailProp, {}>{
                         OpenDate: {this.props.customerDetail.openDate}
                     </div>
                 </div>
-                    <div>
-                    <table className='table'>
+                <div>
+                    <table className='table panel'>
                         <thead>
                             <tr>
                                 <th> Id </ th>
@@ -59,7 +60,51 @@ export class CustomerDetail extends React.Component<CustomerDetailProp, {}>{
                                 )}
                         </tbody>
                     </table>
+                    {this.renderAccountPagination()}
                 </div>
+                
             </div>);
+    }
+
+    renderAccountPagination() {
+
+        let pageIndex = this.props.customerDetail.pageIndex; 
+        let prevButton = null; 
+        let nextButton = null; 
+
+        if (pageIndex > 1) {
+            prevButton = <li>
+                <a href={`${this.props.customerDetail.id}/${pageIndex - 1}`} aria-label="Previous">
+                    <span aria-hidden="true">&laquo;</span>
+                </a>
+            </li>; 
+        }
+
+        let length = this.props.customerDetail.accountLength; 
+        let pageSize = this.props.customerDetail.pageSize;
+
+        let lastPage = Math.ceil(length / pageSize); 
+
+        console.log(length, pageSize, lastPage)
+
+        if (pageIndex < lastPage) {
+            nextButton = <li>
+                <a href={`${this.props.customerDetail.id}/${this.props.customerDetail.pageIndex + 1}`} aria-label="Next">
+                    <span aria-hidden="true">&raquo;</span>
+                </a>
+            </li>;
+        }
+
+        let html = <div className="row">
+            <nav aria-label="Page navigation">
+                <ul className="pagination">
+                    {prevButton}
+                    <li><a>{this.props.customerDetail.pageIndex}</a></li>
+                    {nextButton}
+                </ul>
+            </nav>
+        </div>; 
+
+    return html; 
     }
 }

@@ -17,6 +17,9 @@ namespace NG_Task.Models
 
         public ICollection<AccountDto> Accounts { get; set; } = new List<AccountDto>();
 
-        public int AccountLength { get { return Accounts.Count(); } } 
+        public int AccountLength { get; set; }
+
+        public int PageIndex { get; set; }
+        public int PageSize { get; set; }
     }
 }
