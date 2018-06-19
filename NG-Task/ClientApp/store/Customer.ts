@@ -7,6 +7,8 @@ import { AppThunkAction } from './';
 
 export interface CustomerState {
     isLoading: boolean; 
+    isLoadingCustomerDetail: boolean 
+    selectedCustomer: number; 
     customerDetail?: CustomerDetail; 
     customers: CustomerSummary[]; 
     accountForm?: AccountFormState; 
@@ -73,6 +75,10 @@ interface ReceiveCustomerDetailsAction {
     customerDetail: CustomerDetail; 
 }
 
+interface ClearCustomerDetailsAction {
+    type: 'CLEAR_CUSTOMER'; 
+}
+
 interface RequestDeleteAccountAction {
     type: 'REQUEST_DELETE_ACCOUNT';
     customerId: number; 
@@ -126,7 +132,7 @@ interface ReceiveCurrenciesAction {
 // declared type strings (and not any other arbitrary string).
 type KnownAction =
     RequestCustomersAction | ReceiveCustomersAction
-    | RequestCustomerDetailsAction | ReceiveCustomerDetailsAction
+    | RequestCustomerDetailsAction | ReceiveCustomerDetailsAction | ClearCustomerDetailsAction
     | RequestDeleteAccountAction | ReceiveDeleteAccountAction
     | RequestAddAccountAction | ReceiveAddAccountAction
     | RequestAccountTypesAction | ReceiveAccountTypesAction
@@ -166,6 +172,11 @@ export const actionCreators = {
             addTask(fetchTask); // Ensure server-side prerendering waits for this to complete
             dispatch({ type: 'REQUEST_CUSTOMER', customerId: customerId });
         }
+    },
+
+    clearCustomerDetails: (): AppThunkAction<KnownAction> => (dispatch, getState) => {
+
+        dispatch({ type: 'CLEAR_CUSTOMER'}); 
     },
 
     deleteAccount: (customerId: number, accountId: number): AppThunkAction<KnownAction> => (dispatch, getState) => {
@@ -251,7 +262,10 @@ export const actionCreators = {
 // REDUCER - For a given state and action, returns the new state. To support time travel, this must not mutate the old state.
 
 const unloadedState: CustomerState = {
-    customers: [], isLoading: false,
+    isLoading: false,
+    isLoadingCustomerDetail: false,
+    selectedCustomer: null,
+    customers: [],
     accountForm: {
         accountTypes: [],
         classCodes: [],
@@ -277,15 +291,22 @@ export const reducer: Reducer<CustomerState> = (state: CustomerState, incomingAc
         case 'REQUEST_CUSTOMER':
             return { 
                 ...state,
-                customerDetail: state.customerDetail,
+                isLoadingCustomerDetail: true, 
+                selectedCustomer: action.customerId,
                 isLoading: true
             };
         case 'RECEIVE_CUSTOMER':
                 return {
                     ...state,
+                    isLoadingCustomerDetail: false,
                     customerDetail: action.customerDetail,
                     isLoading: false 
             };
+        case 'CLEAR_CUSTOMER':
+            return {
+                ...state, 
+                customerDetail: null, 
+            }
         case 'REQUEST_DELETE_ACCOUNT':
             return {
                 ...state, 

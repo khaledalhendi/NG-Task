@@ -22,39 +22,42 @@ class Customer extends React.Component<CustomerProps, {}> {
 
         let customerId = parseInt(this.props.match.params.customerId);
 
-        if (customerId){
-            this.props.requestCustomerDetails(customerId);
-            this.props.requestAccountTypes();
-            this.props.requestCurrencies(); 
+        if (customerId) {
+            this.handleCustomerId(customerId);
         }
-
     }
 
     componentWillReceiveProps(nextProps: CustomerProps) {
         // This method runs when incoming props (e.g., route params) change
         let customerId = parseInt(nextProps.match.params.customerId);
 
-        if (customerId)
-        {
-            if (this.props.customerDetail && this.props.customerDetail.id == customerId) {
+        if (customerId) {
+            //only request customer if id has not be handled
+            if (customerId != this.props.selectedCustomer && customerId != nextProps.selectedCustomer) {
+                this.handleCustomerId(customerId);
+            }
+        } else  {
+            this.props.clearCustomerDetails(); 
+        }
+    }
 
-            } else {
-                this.props.requestCustomerDetails(customerId);
-            }
 
-            if (this.props.accountForm.accountTypes == null || this.props.accountForm.accountTypes.length == 0) {
-                this.props.requestAccountTypes();
-            }
-            if (this.props.accountForm.accountTypes == null || this.props.accountForm.accountTypes.length == 0) {
-                this.props.requestCurrencies(); 
-            }
+    ///Handles customerId changes to request a new customer 
+    private handleCustomerId(customerId: number) {
+        if (!this.props.customerDetail || this.props.customerDetail.id != customerId) {
+            this.props.requestCustomerDetails(customerId);
+            this.props.requestAccountTypes();
+            this.props.requestCurrencies();
         }
     }
 
     render() {
         return <div className="container">
+
+            {this.props.isLoading ? this.renderIsLoading() : ""}
+
             <div className="col-md-3 col-lg-3">
-                <CustomerList customers={this.props.customers}/>
+                <CustomerList customers={this.props.customers} selectedId={this.props.selectedCustomer} />
             </div>
             <div className="col-md-9 col-lg-9">   
                 {this.props.customerDetail ? this.renderCustomerDetails() : "Select a customer please."}  
@@ -65,13 +68,17 @@ class Customer extends React.Component<CustomerProps, {}> {
     renderCustomerDetails()
     {
         return <div>
-            <div className=".col-9">
+            <div>
                 <CustomerDetail customerDetail={this.props.customerDetail} onDelete={this.accountOnDeleteHandler} />
             </div>
             <div>
                 <CreateAccountForm {...this.props.accountForm} {...this.formActions} />
             </div>
         </div>;
+    }
+
+    renderIsLoading() {
+        return "Loading..."; 
     }
 
     accountOnDeleteHandler = (accountId: number) => {
@@ -101,7 +108,10 @@ const mapStateToProps = (state: ApplicationState): CustomerProps => {
         customers: state.customer.customers,
         customerDetail: state.customer.customerDetail,
         isLoading: state.customer.isLoading,
-        accountForm: state.customer.accountForm
+        accountForm: state.customer.accountForm,
+        selectedCustomer: state.customer.selectedCustomer,
+        isLoadingCustomerDetailc: state.customer.isLoadingCustomerDetail,
+
     } as any
 };
 
@@ -109,6 +119,7 @@ const mapDispatchToProps = (dispatch: any): any => {
     return bindActionCreators({
         requestCustomers: CustomerState.actionCreators.requestCustomers,
         requestCustomerDetails: CustomerState.actionCreators.requestCustomerDetails,
+        clearCustomerDetails: CustomerState.actionCreators.clearCustomerDetails,
         deleteAccount: CustomerState.actionCreators.deleteAccount,
         addAccount: CustomerState.actionCreators.addAccount,
         requestAccountTypes: CustomerState.actionCreators.requestAccountTypes,

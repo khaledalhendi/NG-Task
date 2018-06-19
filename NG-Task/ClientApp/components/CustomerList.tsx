@@ -1,16 +1,15 @@
-﻿import { NavLink, Link } from 'react-router-dom';
+﻿import { NavLink, Link, Redirect, RouteComponentProps, Router } from 'react-router-dom';
 import * as React from 'react';
-import { RouteComponentProps } from 'react-router-dom';
 import { ApplicationState } from '../store';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { CustomerSummary } from "../store/Customer";
 import Search from 'react-search-box';
 
-
 interface CustomerListPros
 {
     customers: CustomerSummary[]; 
+    selectedId?: number; 
 }
 
 interface CustomerListState {
@@ -56,17 +55,16 @@ export class CustomerList extends React.Component<CustomerListPros, CustomerList
     }
 
     render() {
-       
         return <div>
             {this.renderNgSearchBar()}
-            Customers: {this.state.filtered.length}
-            <ul>
+            <div className="list-group">
+                Results: {this.state.filtered.length} 
                 {this.state.filtered.map(c =>
-                    <li key={c.id}>
-                        <Link to={`/${c.id}`}>{c.name}</Link>
-                    </li>
+                    <Link key={c.id} className={"btn list-group-item" + (this.props.selectedId == c.id ? " disabled" : "")} to={`/${c.id}`}>
+                        {c.name}
+                    </Link>
                 )}
-            </ul>
+            </div>
         </div>;
     };
 }

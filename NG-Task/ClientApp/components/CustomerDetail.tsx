@@ -22,17 +22,19 @@ export class CustomerDetail extends React.Component<CustomerDetailProp, {}>{
 
     private renderTable() {
         return (
-            <div>
-                <div>
-                    Name: {this.props.customerDetail.name}
+            <div className="panel">
+                <div className="panel">
+                    <div>
+                        Name: {this.props.customerDetail.name}
+                    </div>
+                    <div>
+                        Total Balance: {this.props.customerDetail.totalBalance}
+                    </div>
+                    <div>
+                        OpenDate: {this.props.customerDetail.openDate}
+                    </div>
                 </div>
-                <div>
-                    Total Balance: {this.props.customerDetail.totalBalance} EGP
-                </div>
-                <div>
-                    OpenDate: {this.props.customerDetail.openDate}
-                </div>
-                <div>
+                    <div>
                     <table className='table'>
                         <thead>
                             <tr>

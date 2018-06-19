@@ -13,7 +13,7 @@ namespace NG_Task.Models
         public string Branch { get; set; }
         public string OpenDate { get; set; }
 
-        public decimal TotalBalance { set; get; }
+        public string TotalBalance { set; get; }
 
         public ICollection<AccountDto> Accounts { get; set; } = new List<AccountDto>();
 

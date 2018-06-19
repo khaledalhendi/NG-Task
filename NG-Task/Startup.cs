@@ -60,12 +60,16 @@ namespace NG_Task
 
                 c.CreateMap<Customer, CustomerViewDto>();
 
-                c.CreateMap<Account, AccountDto>();
+                c.CreateMap<Account, AccountDto>().AfterMap((s, d) => 
+                {
+                    d.Balance = s.Balance.ToString("0000.00");
+                });
                 c.CreateMap<AccountCreateDto, Account>();
 
-                c.CreateMap<ClassCode, ClassCodeDto>().ConstructUsing(
-                    (s) => { return new ClassCodeDto{ClassCode = s.Code, AccountType = s.AccountType }; }
-                    );
+                c.CreateMap<ClassCode, ClassCodeDto>().AfterMap((s, d) =>
+                {
+                    d.ClassCode = s.Code;
+                });
             });
             app.UseStaticFiles();
 

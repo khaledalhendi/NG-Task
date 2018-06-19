@@ -44,6 +44,8 @@
     "webpack-merge": "4.1.0"
   },
   "dependencies": {
+    "@types/react-bootstrap": "^0.32.9",
+    "react-bootstrap": "^0.32.1",
     "react-search-bar": "^2.2.0",
     "react-search-box": "0.0.10"
   }
