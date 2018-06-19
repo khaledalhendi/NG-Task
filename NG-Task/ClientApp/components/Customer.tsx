@@ -57,7 +57,7 @@ class Customer extends React.Component<CustomerProps, {}> {
             {this.props.isLoading ? this.renderIsLoading() : ""}
 
             <div className="col-md-3 col-lg-3">
-                <CustomerList customers={this.props.customers}/>
+                <CustomerList customers={this.props.customers} selectedId={this.props.selectedCustomer} />
             </div>
             <div className="col-md-9 col-lg-9">   
                 {this.props.customerDetail ? this.renderCustomerDetails() : "Select a customer please."}  

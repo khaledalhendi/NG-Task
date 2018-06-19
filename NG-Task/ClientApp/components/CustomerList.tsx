@@ -9,6 +9,7 @@ import Search from 'react-search-box';
 interface CustomerListPros
 {
     customers: CustomerSummary[]; 
+    selectedId?: number; 
 }
 
 export class CustomerList extends React.Component<CustomerListPros, {}>{
@@ -41,7 +42,7 @@ export class CustomerList extends React.Component<CustomerListPros, {}>{
             <div className="list-group">
                 Results: {this.props.customers.length} 
                 {this.props.customers.map(c =>
-                    <Link key={c.id} className="btn list-group-item" to={`/${c.id}`}>
+                    <Link key={c.id} className={"btn list-group-item" + (this.props.selectedId == c.id ? " disabled" : "")} to={`/${c.id}`}>
                         {c.name}
                     </Link>
                 )}
