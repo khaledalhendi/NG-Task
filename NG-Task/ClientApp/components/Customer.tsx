@@ -7,6 +7,7 @@ import { bindActionCreators } from 'redux';
 import { CustomerList } from "./CustomerList";
 import { CustomerDetail } from "./CustomerDetail";
 import { CreateAccountForm } from "./CreateAccountForm";
+import { Modal, Button } from 'react-bootstrap/lib';
 
 // At runtime, Redux will merge together...
 type CustomerProps =
@@ -58,8 +59,7 @@ class Customer extends React.Component<CustomerProps, {}> {
 
     render() {
         return <div className="container">
-
-            {this.props.isLoading ? this.renderIsLoading() : ""}
+            {this.props.isLoading? this.renderIsLoading() : ""}
 
             <div className="col-md-3 col-lg-3">
                 <CustomerList customers={this.props.customers} selectedId={this.props.selectedCustomer} />
@@ -83,7 +83,18 @@ class Customer extends React.Component<CustomerProps, {}> {
     }
 
     renderIsLoading() {
-        return "Loading..."; 
+        return <div className="static-modal loading-popup">
+            <Modal.Dialog>
+                <Modal.Header>
+                    <Modal.Title> <span className="glyphicon glyphicon-refresh loading-spin" /> Loading</Modal.Title>
+
+                </Modal.Header>
+                <Modal.Body className="loader" >
+                    Please wait while I load your data
+                   
+                            </Modal.Body>
+            </Modal.Dialog>
+        </div>
     }
 
     accountOnDeleteHandler = (accountId: number) => {
