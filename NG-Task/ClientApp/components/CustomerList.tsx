@@ -6,6 +6,8 @@ import { bindActionCreators } from 'redux';
 import { CustomerSummary } from "../store/Customer";
 import Search from 'react-search-box';
 
+
+
 interface CustomerListPros
 {
     customers: CustomerSummary[]; 
@@ -16,21 +18,39 @@ interface CustomerListState {
     filtered: CustomerSummary[];
 }
 export class CustomerList extends React.Component<CustomerListPros, CustomerListState>{
-    handleChange(value) {
+   /* handleChange(value) {
         //console.log(typeof value)
         //console.log(value);
+        this.filteredCustomers(value);
+    }*/
+    handleInput=(value) => {
+        console.log(value.currentTarget.value);
+        this.filteredCustomers(value.currentTarget.value);
     }
 
     componentWillMount() {
         this.setState({ filtered: this.props.customers });
-        this.filteredCustomers("A");
+        //this.filteredCustomers(null);
     }
     filteredCustomers(filterInput: string) {
-        //let filtered: CustomerSummary[] = [{ name: filterInput, id: 0, branch: "b1" }, { name: "2", id: 1, branch:"b2" }];
-        let filtered: CustomerSummary[] = this.props.customers;
+        //let filtered: CustomerSummary[] = [{ name: filterInput, id: 0, branch: "b1" }, { name: "2", id: 1, branch: "b2" }];
+        let filtered: CustomerSummary[] = null;
+
+        if (filterInput === null) {
+             filtered = this.props.customers;
+        } else {
+            filtered = []; //to empty the array
+            for (var i = 0; i < this.props.customers.length; i++) {
+                let c = this.props.customers[i];
+                if (c.name.indexOf(filterInput) >=0) {
+                    filtered.push(c)
+                }
+            }} 
         //do filter logic 
         this.setState({ filtered }); //this means filterd global = local 
     }
+
+    /*
     renderNgSearchBar() {
         var inBox = this.handleChange
         //console.log(inBox)
@@ -52,11 +72,19 @@ export class CustomerList extends React.Component<CustomerListPros, CustomerList
                 </div>
             </div>
         </div>);
+    }*/
+   
+    renderNgSearchBarInput() {
+        return (<input
+            onInput={this.handleInput}
+            placeholder="temp"
+        />);
+        
     }
 
     render() {
         return <div>
-            {this.renderNgSearchBar()}
+            {this.renderNgSearchBarInput()}
             <div className="list-group">
                 Results: {this.state.filtered.length} 
                 {this.state.filtered.map(c =>
