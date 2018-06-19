@@ -9,6 +9,7 @@ export interface CustomerState {
     isLoading: boolean; 
     isLoadingCustomerDetail: boolean 
     selectedCustomer: number; 
+    accountsPageIndex: number; 
     customerDetail?: CustomerDetail; 
     customers: CustomerSummary[]; 
     accountForm?: AccountFormState; 
@@ -26,7 +27,10 @@ export interface CustomerDetail {
     branch: string;
     openDate: string;
     accounts: CustomerAccount[];
+    accountLength: number;
     totalBalance: number; 
+    pageIndex: number; 
+    pageSize: number; 
 }
 
 export interface CustomerAccount {
@@ -68,11 +72,12 @@ interface ReceiveCustomersAction {
 interface RequestCustomerDetailsAction {
     type: 'REQUEST_CUSTOMER';
     customerId: number;
+    pageIndex: number; 
 }
 
 interface ReceiveCustomerDetailsAction {
     type: 'RECEIVE_CUSTOMER';
-    customerDetail: CustomerDetail; 
+    customerDetail: CustomerDetail;  
 }
 
 interface ClearCustomerDetailsAction {
@@ -159,18 +164,18 @@ export const actionCreators = {
         }
     },
 
-    requestCustomerDetails: (customerId: number): AppThunkAction<KnownAction> => (dispatch, getState) => {
-        // Only load data if it's something we don't already have (and are not already loading)
+    requestCustomerDetails: (customerId: number, pageIndex: number = 1): AppThunkAction<KnownAction> => (dispatch, getState) => {
 
-        if (!getState().customer.customerDetail || customerId !== getState().customer.customerDetail.id) {
-            let fetchTask = fetch(`api/customers/${customerId}`)
+        // Only load data if it's something we don't already have (and are not already loading)
+        if (!getState().customer.customerDetail || customerId !== getState().customer.customerDetail.id || pageIndex != getState().customer.accountsPageIndex) {
+            let fetchTask = fetch(`api/customers/${customerId}/${pageIndex}`)
                 .then(response => response.json() as Promise<CustomerDetail>)
                 .then(data => {
                     dispatch({ type: 'RECEIVE_CUSTOMER', customerDetail: data });
                 });
 
             addTask(fetchTask); // Ensure server-side prerendering waits for this to complete
-            dispatch({ type: 'REQUEST_CUSTOMER', customerId: customerId });
+            dispatch({ type: 'REQUEST_CUSTOMER', customerId, pageIndex });
         }
     },
 
@@ -265,6 +270,7 @@ const unloadedState: CustomerState = {
     isLoading: false,
     isLoadingCustomerDetail: false,
     selectedCustomer: null,
+    accountsPageIndex: 1,
     customers: [],
     accountForm: {
         accountTypes: [],
@@ -293,6 +299,7 @@ export const reducer: Reducer<CustomerState> = (state: CustomerState, incomingAc
                 ...state,
                 isLoadingCustomerDetail: true, 
                 selectedCustomer: action.customerId,
+                accountsPageIndex: action.pageIndex,
                 isLoading: true
             };
         case 'RECEIVE_CUSTOMER':
@@ -306,6 +313,7 @@ export const reducer: Reducer<CustomerState> = (state: CustomerState, incomingAc
             return {
                 ...state, 
                 customerDetail: null, 
+                selectedCustomer: null
             }
         case 'REQUEST_DELETE_ACCOUNT':
             return {

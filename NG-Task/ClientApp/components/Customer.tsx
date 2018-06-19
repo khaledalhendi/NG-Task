@@ -7,12 +7,13 @@ import { bindActionCreators } from 'redux';
 import { CustomerList } from "./CustomerList";
 import { CustomerDetail } from "./CustomerDetail";
 import { CreateAccountForm } from "./CreateAccountForm";
+import { Modal, Button } from 'react-bootstrap/lib';
 
 // At runtime, Redux will merge together...
 type CustomerProps =
     CustomerState.CustomerState        // ... state we've requested from the Redux store
     & typeof CustomerState.actionCreators      // ... plus action creators we've requested
-    & RouteComponentProps<{ customerId: string }>; // ... plus incoming routing parameters
+    & RouteComponentProps<{ customerId: string, pageIndex: string}>; // ... plus incoming routing parameters
 
 class Customer extends React.Component<CustomerProps, {}> {
 
@@ -21,40 +22,55 @@ class Customer extends React.Component<CustomerProps, {}> {
         this.props.requestCustomers(); 
 
         let customerId = parseInt(this.props.match.params.customerId);
+        let pageIndex = parseInt(this.props.match.params.pageIndex);
+
+        if (!pageIndex) {
+            pageIndex = 1; 
+        }
 
         if (customerId) {
-            this.handleCustomerId(customerId);
+            this.handleCustomerId(customerId, pageIndex);
         }
     }
 
     componentWillReceiveProps(nextProps: CustomerProps) {
         // This method runs when incoming props (e.g., route params) change
         let customerId = parseInt(nextProps.match.params.customerId);
+        let pageIndex = parseInt(nextProps.match.params.pageIndex);
 
         if (customerId) {
-            //only request customer if id has not be handled
             if (customerId != this.props.selectedCustomer && customerId != nextProps.selectedCustomer) {
-                this.handleCustomerId(customerId);
+                if (!pageIndex) {
+                    pageIndex = 1;
+                }
+                this.handleCustomerId(customerId, pageIndex);
             }
-        } else  {
+            else if (pageIndex) {
+                this.handleAccountPageChanged(pageIndex);
+            }
+        }
+        else {
+           
             this.props.clearCustomerDetails(); 
         }
     }
 
-
     ///Handles customerId changes to request a new customer 
-    private handleCustomerId(customerId: number) {
+    private handleCustomerId(customerId: number, pageIndex: number = 1) {
         if (!this.props.customerDetail || this.props.customerDetail.id != customerId) {
-            this.props.requestCustomerDetails(customerId);
+            this.props.requestCustomerDetails(customerId, pageIndex);
             this.props.requestAccountTypes();
             this.props.requestCurrencies();
         }
     }
 
+    private handleAccountPageChanged(pageIndex: number) {
+        this.props.requestCustomerDetails(this.props.customerDetail.id, pageIndex);
+    }
+
     render() {
         return <div className="container">
-
-            {this.props.isLoading ? this.renderIsLoading() : ""}
+            {this.props.isLoading? this.renderIsLoading() : ""}
 
             <div className="col-md-3 col-lg-3">
                 <CustomerList customers={this.props.customers} selectedId={this.props.selectedCustomer} />
@@ -78,7 +94,18 @@ class Customer extends React.Component<CustomerProps, {}> {
     }
 
     renderIsLoading() {
-        return "Loading..."; 
+        return <div className="static-modal loading-popup">
+            <Modal.Dialog>
+                <Modal.Header>
+                    <Modal.Title> <span className="glyphicon glyphicon-refresh loading-spin" /> Loading</Modal.Title>
+
+                </Modal.Header>
+                <Modal.Body className="loader" >
+                    Please wait while I load your data
+                   
+                            </Modal.Body>
+            </Modal.Dialog>
+        </div>
     }
 
     accountOnDeleteHandler = (accountId: number) => {
@@ -110,8 +137,8 @@ const mapStateToProps = (state: ApplicationState): CustomerProps => {
         isLoading: state.customer.isLoading,
         accountForm: state.customer.accountForm,
         selectedCustomer: state.customer.selectedCustomer,
+        accountsPageIndex: state.customer.accountsPageIndex,
         isLoadingCustomerDetailc: state.customer.isLoadingCustomerDetail,
-
     } as any
 };
 

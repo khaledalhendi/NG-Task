@@ -64,3 +64,39 @@
         text-overflow: ellipsis;
     }
 }
+
+.loading-spin {
+    animation: loading-spin infinite 1s linear;
+    height: 18px;
+}
+
+.loading-popup {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(205,206,255,0.7);
+    z-index: 10000;
+    animation: loading-popup 1 1s linear;
+}
+
+@keyframes loading-spin {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+@keyframes loading-popup {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: .5;
+    }
+}

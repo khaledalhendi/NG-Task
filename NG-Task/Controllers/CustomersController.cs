@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -11,6 +12,9 @@ namespace NG_Task.Controllers
     [Route("api/customers")]
     public class CustomersController : Controller
     {
+        const int DefaultPageIndex = 1;
+        const int DefaultPageSize = 3;
+
         private NGContext NGContext;
 
         public CustomersController(NGContext NGContext)
@@ -26,8 +30,8 @@ namespace NG_Task.Controllers
             return Ok(result);
         }
 
-        [HttpGet("{customerId}", Name = "CustomerDetails")]
-        public IActionResult GetCustomer(int customerId)
+        [HttpGet("{customerId}/{pageIndex?}", Name = "CustomerDetails")]
+        public IActionResult GetCustomer(int customerId, int pageIndex = DefaultPageIndex)
         {
             Customer customer = NGContext.Customers.Include(c => c.Accounts).ThenInclude(a => a.Currency).FirstOrDefault(c => c.Id == customerId);
 
@@ -42,6 +46,17 @@ namespace NG_Task.Controllers
             decimal totalBalance = customer.Accounts.Sum(a => a.Balance / a.Currency.Multiplier); 
             customerDto.TotalBalance = totalBalance.ToString("0000.00 " + localCurrencyISO);
 
+            customerDto.AccountLength = customer.Accounts.Count();
+
+            int lastPage = (int)MathF.Ceiling((float)customerDto.AccountLength / DefaultPageSize);
+            if (pageIndex > lastPage)
+            {
+                pageIndex = lastPage;
+            }
+
+            customerDto.Accounts = PickAccounts(customerId, pageIndex).ToArray();
+            customerDto.PageIndex = pageIndex;
+            customerDto.PageSize = DefaultPageSize; 
             return Ok(customerDto);
         }
 
@@ -93,9 +108,8 @@ namespace NG_Task.Controllers
             return GetCustomer(customerId); 
         }
 
-
         [HttpGet("{customerId}/account/{accountId}", Name = "GetAccount")]
-        public IActionResult GetCustomerAccounts(int customerId, int accountId)
+        public IActionResult GetCustomerAccount(int customerId, int accountId)
         {
             Customer customer = NGContext.Customers.Include(c => c.Accounts).FirstOrDefault(c => c.Id == customerId);
 
@@ -113,6 +127,36 @@ namespace NG_Task.Controllers
 
             AccountDto accountDto = AutoMapper.Mapper.Map<AccountDto>(account);
             return Ok(accountDto);
+        }
+
+        [HttpGet("{customerId}/accounts/{pageIndex?}", Name = "GetAccounts")]
+        public IActionResult GetCustomerAccounts(int customerId, int pageIndex = DefaultPageIndex)
+        {
+            Customer customer = NGContext.Customers.Include(c => c.Accounts).FirstOrDefault(c => c.Id == customerId);
+
+            if (customer == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(PickAccounts(customerId, pageIndex));
+        }
+
+
+        private IEnumerable<AccountDto> PickAccounts(int customerId, int pageIndex, int pageSize = DefaultPageSize)
+        {
+            Customer customer = NGContext.Customers.Include(c => c.Accounts).FirstOrDefault(c => c.Id == customerId);
+
+            if (customer == null)
+            {
+                return null;
+            }
+
+            IEnumerable<Account> account = customer.Accounts.Skip((pageIndex - 1) * pageSize).Take(pageSize);
+
+            IEnumerable<AccountDto> accountDtos = AutoMapper.Mapper.Map<IEnumerable<AccountDto>>(account);
+
+            return accountDtos;
         }
     }
 }
