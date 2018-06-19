@@ -13,7 +13,7 @@ import { Modal, Button } from 'react-bootstrap/lib';
 type CustomerProps =
     CustomerState.CustomerState        // ... state we've requested from the Redux store
     & typeof CustomerState.actionCreators      // ... plus action creators we've requested
-    & RouteComponentProps<{ customerId: string, pageIndex?: string}>; // ... plus incoming routing parameters
+    & RouteComponentProps<{ customerId: string, pageIndex: string}>; // ... plus incoming routing parameters
 
 class Customer extends React.Component<CustomerProps, {}> {
 
@@ -36,17 +36,24 @@ class Customer extends React.Component<CustomerProps, {}> {
     componentWillReceiveProps(nextProps: CustomerProps) {
         // This method runs when incoming props (e.g., route params) change
         let customerId = parseInt(nextProps.match.params.customerId);
+        let pageIndex = parseInt(nextProps.match.params.pageIndex);
 
         if (customerId) {
-            //only request customer if id has not be handled
             if (customerId != this.props.selectedCustomer && customerId != nextProps.selectedCustomer) {
-                this.handleCustomerId(customerId);
+                if (!pageIndex) {
+                    pageIndex = 1;
+                }
+                this.handleCustomerId(customerId, pageIndex);
             }
-        } else  {
+            else if (pageIndex) {
+                this.handleAccountPageChanged(pageIndex);
+            }
+        }
+        else {
+           
             this.props.clearCustomerDetails(); 
         }
     }
-
 
     ///Handles customerId changes to request a new customer 
     private handleCustomerId(customerId: number, pageIndex: number = 1) {
@@ -55,6 +62,10 @@ class Customer extends React.Component<CustomerProps, {}> {
             this.props.requestAccountTypes();
             this.props.requestCurrencies();
         }
+    }
+
+    private handleAccountPageChanged(pageIndex: number) {
+        this.props.requestCustomerDetails(this.props.customerDetail.id, pageIndex);
     }
 
     render() {
@@ -126,8 +137,8 @@ const mapStateToProps = (state: ApplicationState): CustomerProps => {
         isLoading: state.customer.isLoading,
         accountForm: state.customer.accountForm,
         selectedCustomer: state.customer.selectedCustomer,
+        accountsPageIndex: state.customer.accountsPageIndex,
         isLoadingCustomerDetailc: state.customer.isLoadingCustomerDetail,
-
     } as any
 };
 

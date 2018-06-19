@@ -9,6 +9,7 @@ export interface CustomerState {
     isLoading: boolean; 
     isLoadingCustomerDetail: boolean 
     selectedCustomer: number; 
+    accountsPageIndex: number; 
     customerDetail?: CustomerDetail; 
     customers: CustomerSummary[]; 
     accountForm?: AccountFormState; 
@@ -164,9 +165,9 @@ export const actionCreators = {
     },
 
     requestCustomerDetails: (customerId: number, pageIndex: number = 1): AppThunkAction<KnownAction> => (dispatch, getState) => {
-        // Only load data if it's something we don't already have (and are not already loading)
 
-        if (!getState().customer.customerDetail || customerId !== getState().customer.customerDetail.id) {
+        // Only load data if it's something we don't already have (and are not already loading)
+        if (!getState().customer.customerDetail || customerId !== getState().customer.customerDetail.id || pageIndex != getState().customer.accountsPageIndex) {
             let fetchTask = fetch(`api/customers/${customerId}/${pageIndex}`)
                 .then(response => response.json() as Promise<CustomerDetail>)
                 .then(data => {
@@ -269,6 +270,7 @@ const unloadedState: CustomerState = {
     isLoading: false,
     isLoadingCustomerDetail: false,
     selectedCustomer: null,
+    accountsPageIndex: 1,
     customers: [],
     accountForm: {
         accountTypes: [],
@@ -297,6 +299,7 @@ export const reducer: Reducer<CustomerState> = (state: CustomerState, incomingAc
                 ...state,
                 isLoadingCustomerDetail: true, 
                 selectedCustomer: action.customerId,
+                accountsPageIndex: action.pageIndex,
                 isLoading: true
             };
         case 'RECEIVE_CUSTOMER':
