@@ -101,8 +101,8 @@ export class CustomerDetail extends React.Component<CustomerDetailProp, {}>{
         let pagationItems = [];
 
         //previos
-        pagationItems.push(<li>
-            <Link to={`/${this.props.customerDetail.id}/${pageIndex - 1}`} disabled={pageIndex <= 1}><span className="glyphicon glyphicon-menu-left" /></Link>
+        pagationItems.push(<li className={pageIndex <= 1 ? "disabled" : ""} >
+            <Link to={`/${this.props.customerDetail.id}/${pageIndex <= 1 ? pageIndex : pageIndex - 1}`} disabled={pageIndex <= 1}  ><span className="glyphicon glyphicon-menu-left" /></Link>
         </li>
         );
 
@@ -116,8 +116,8 @@ export class CustomerDetail extends React.Component<CustomerDetailProp, {}>{
         }
 
         //next 
-        pagationItems.push(<li>
-            <Link to={`/${this.props.customerDetail.id}/${pageIndex + 1}`} disabled={pageIndex >= lastPage}><span className="glyphicon glyphicon-menu-right" /></Link>
+        pagationItems.push(<li className={pageIndex >= lastPage ? "disabled" : ""}>
+            <Link to={`/${this.props.customerDetail.id}/${pageIndex >= lastPage ? pageIndex : pageIndex + 1}`} disabled={pageIndex >= lastPage}><span className="glyphicon glyphicon-menu-right" /></Link>
         </li>
         );
 
