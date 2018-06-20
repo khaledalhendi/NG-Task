@@ -33,6 +33,7 @@ export class CustomerList extends React.Component<CustomerListPros, CustomerList
         //this.filteredCustomers(null);
     }
     filteredCustomers(filterInput: string) {
+        filterInput = filterInput.toLocaleLowerCase(); 
         //let filtered: CustomerSummary[] = [{ name: filterInput, id: 0, branch: "b1" }, { name: "2", id: 1, branch: "b2" }];
         let filtered: CustomerSummary[] = null;
 
@@ -42,7 +43,7 @@ export class CustomerList extends React.Component<CustomerListPros, CustomerList
             filtered = []; //to empty the array
             for (var i = 0; i < this.props.customers.length; i++) {
                 let c = this.props.customers[i];
-                if (c.name.indexOf(filterInput) >=0) {
+                if (c.name.toLocaleLowerCase().indexOf(filterInput) >= 0) {
                     filtered.push(c)
                 }
             }} 
