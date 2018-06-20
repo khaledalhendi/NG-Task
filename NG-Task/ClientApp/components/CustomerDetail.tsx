@@ -7,7 +7,7 @@ import { bindActionCreators } from 'redux';
 import { CreateAccountForm } from "./CreateAccountForm";
 import configureStore from '../configureStore';
 import { CustomerAccount } from '../store/Customer';
-import { PageHeader, Table } from 'react-bootstrap';
+import { PageHeader, Table, Pagination } from 'react-bootstrap';
 
 
 // At runtime, Redux will merge together...
@@ -59,7 +59,7 @@ export class CustomerDetail extends React.Component<CustomerDetailProp, {}>{
                     </div>
 
                 </div>
-                <div>
+                <div className="panel">
                     <Table>
                         <thead style={{ backgroundColor: "black", borderColor: "black", borderRadius: "10", color:"#ccc"}}>
                             <tr className="header">
@@ -86,52 +86,48 @@ export class CustomerDetail extends React.Component<CustomerDetailProp, {}>{
                                 )}
                         </tbody>
                     </Table>
-                    {this.renderAccountPagination()}
                 </div>
+                {this.renderAccountPagination()}
                 
             </div>);
     }
 
     renderAccountPagination() {
+        let pageIndex = this.props.customerDetail.pageIndex;
+        let lastPage = Math.ceil(this.props.customerDetail.accountLength / this.props.customerDetail.pageSize);
 
-        if (this.props.customerDetail.accountLength <= this.props.customerDetail.pageSize) {
-            return; 
+        let pagationItems = [];
+
+        //previos
+        pagationItems.push(<li>
+            <Link to={`/${this.props.customerDetail.id}/${pageIndex - 1}`} disabled={pageIndex <= 1}><span className="glyphicon glyphicon-menu-left" /></Link>
+        </li>
+        );
+
+        //pages 
+        for (let i = 1; i <= lastPage; i++) {
+            pagationItems.push(
+                <li className={i === pageIndex ? "active" : ""}>
+                    <Link to={`/${this.props.customerDetail.id}/${i}`} disabled={i === pageIndex}>{i}</Link>
+                </li>
+            );
         }
 
-        let pageIndex = this.props.customerDetail.pageIndex; 
-        let prevButton = null; 
-        let nextButton = null; 
+        //next 
+        pagationItems.push(<li>
+            <Link to={`/${this.props.customerDetail.id}/${pageIndex + 1}`} disabled={pageIndex >= lastPage}><span className="glyphicon glyphicon-menu-right" /></Link>
+        </li>
+        );
 
-        if (pageIndex > 1) {
-            prevButton = <li>
-                <Link to={`/${this.props.customerDetail.id}/${pageIndex - 1}`} aria-label="Previous">
-                    <span aria-hidden="true">&laquo;</span>
-                </Link>
-            </li>; 
-        }
+        //pagation element
+        const paginationBasic = (
+            <div className="text-center">
+                <Pagination bsSize="medium" style={{ backgroundColor:"green", marginTop: "0px", marginBottom: "10px" }}>
+                    {pagationItems}
+                </Pagination>
+            </div>
+        );
 
-        let length = this.props.customerDetail.accountLength; 
-        let pageSize = this.props.customerDetail.pageSize;
-        let lastPage = Math.ceil(length / pageSize); 
-
-        if (pageIndex < lastPage) {
-            nextButton = <li>
-                <Link to={`/${this.props.customerDetail.id}/${this.props.customerDetail.pageIndex + 1}`} aria-label="Next">
-                    <span aria-hidden="true">&raquo;</span>
-                </Link>
-            </li>;
-        }
-
-        let html = <div className="row">
-            <nav aria-label="Page navigation">
-                <ul className="pagination">
-                    {prevButton}
-                    <li><a>{this.props.customerDetail.pageIndex}</a></li>
-                    {nextButton}
-                </ul>
-            </nav>
-        </div>; 
-
-    return html; 
+        return paginationBasic; 
     }
 }
