@@ -7,6 +7,7 @@
     <AssemblyName>NG_Task</AssemblyName>
     <RootNamespace>NG_Task</RootNamespace>
     <PublishDir>$(OutDir)_PublishedWebsites\NetCoreWebApp\</PublishDir>
+    <Configurations>Debug;Release;Production</Configurations>
   </PropertyGroup>
 
   <ItemGroup>

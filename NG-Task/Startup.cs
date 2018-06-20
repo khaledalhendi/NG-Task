@@ -29,7 +29,7 @@ namespace NG_Task
         {
             services.AddMvc();
 
-            string connectionString = "Server=e2b6ec26-8d9a-4d86-bd0b-a90500c72bde.sqlserver.sequelizer.com;Database=dbe2b6ec268d9a4d86bd0ba90500c72bde;User ID=fsgssnabqiyunbte;Password=8ad2qtTwxjU5AWTuCB2ZmQ63dAxaTrtXwjSWPFB38ZsHUdKXHLsdj57rciXW5SLg;";
+            string connectionString = Configuration["sqlconnection"]; 
             services.AddDbContext<NGContext>(o => o.UseSqlServer(connectionString));
         }
 
