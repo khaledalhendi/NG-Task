@@ -72,7 +72,7 @@ export class CreateAccountForm extends React.Component<CreateAccountProp, Create
                         $
                     </InputGroup.Addon>
                     <input className="form-control" type="text" value={this.state.balanceInput ? this.state.balanceInput : ""}
-                        placeholder="balance" pattern="\\d+(\\\.\\d{0,3})?"
+                        placeholder="balance" pattern="[1-9]\\d*(\\\.\\d{0,3})?"
                         onInput={this.BalanceChangeHandler}
                         onKeyPress={this.OnBalanceSubmitHandler}
                         />
