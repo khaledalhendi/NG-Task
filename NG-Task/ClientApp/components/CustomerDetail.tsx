@@ -78,7 +78,7 @@ export class CustomerDetail extends React.Component<CustomerDetailProp, {}>{
                                     <td className="text-center">{a.balance ? 1+i + ((this.props.customerDetail.pageIndex-1) * this.props.customerDetail.pageSize): null}</td>
                                     <td className="text-center">{a.accountType}</td>
                                     <td className="text-center">{a.classCode}</td>
-                                    <td className="text-center">{a.balance ? a.id : null}</td>
+                                    <td className="text-center">{a.balance ? ("000000000000" + a.id).substr((a.id + "").length) : null}</td>
                                     <td className="text-center">{a.balance}</td>
                                     <td className="text-center">{a.currencyISO}</td>
                                     <td className="text-center">
