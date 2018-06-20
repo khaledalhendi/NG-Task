@@ -76,7 +76,7 @@ export class CustomerList extends React.Component<CustomerListPros, CustomerList
     }*/
    
     renderNgSearchBarInput() {
-        return (<input
+        return (<input className="form-control"
             onInput={this.handleInput}
             placeholder="Search..."
         />);
@@ -84,10 +84,12 @@ export class CustomerList extends React.Component<CustomerListPros, CustomerList
     }
 
     render() {
-        return <div style={{marginTop:"32px"}}>
+        return <div className="well" style={{ marginTop: "32px" }}>
             {this.renderNgSearchBarInput()}
             <div className="list-group">
-                Results: {this.state.filtered.length} 
+                <div style={{ color: "grey" }}>
+                    Results: {this.state.filtered.length}
+                </div>             
                 {this.state.filtered.map(c =>
                     <Link key={c.id}
                         to={`/${c.id}`}
