@@ -6,6 +6,7 @@ import * as CustomerState from '../store/Customer';
 import { bindActionCreators } from 'redux';
 import { CreateAccountForm } from "./CreateAccountForm";
 import configureStore from '../configureStore';
+import { CustomerAccount } from '../store/Customer';
 
 
 // At runtime, Redux will merge together...
@@ -23,6 +24,20 @@ export class CustomerDetail extends React.Component<CustomerDetailProp, {}>{
     }
 
     private renderTable() {
+
+        let tableData: CustomerAccount[] = []; 
+        let accounts = this.props.customerDetail.accounts; 
+
+        for (var i = 0; i < this.props.customerDetail.pageSize; i++) {
+            if (i < accounts.length) {
+                tableData.push(accounts[i]); 
+            }
+            else {
+                tableData.push({ accountType: " ", balance: null, classCode: "", currencyISO: "", id: -i }); 
+            }
+        }
+
+
         return (
             <div className="panel">
                 <div className="panel">
@@ -49,14 +64,16 @@ export class CustomerDetail extends React.Component<CustomerDetailProp, {}>{
                             </tr>
                         </thead>
                         <tbody>
-                            {this.props.customerDetail.accounts.map(a =>
-                                    <tr key={a.id}>
-                                        <td>{a.id}</td>
+                            {tableData.map(a =>
+                                <tr key={a.id} style={{ lineHeight: "50px", height: "50px"}}> 
+                                    <td>{a.balance ? a.id : null}</td>
                                         <td>{a.accountType}</td>
                                         <td>{a.classCode}</td>
                                         <td>{a.balance}</td>
                                         <td>{a.currencyISO}</td>
-                                        <td> <button className="btn btn-danger" onClick={(e) => this.props.onDelete(a.id)}> Delete</button> </ td>
+                                    <td>
+                                        {a.balance ? <button className="btn btn-danger" onClick={(e) => this.props.onDelete(a.id)}> Delete </button> : ""}
+                                        </ td>
                                     </tr>
                                 )}
                         </tbody>
