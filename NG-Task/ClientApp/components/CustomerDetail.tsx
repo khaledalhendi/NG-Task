@@ -69,6 +69,10 @@ export class CustomerDetail extends React.Component<CustomerDetailProp, {}>{
 
     renderAccountPagination() {
 
+        if (this.props.customerDetail.accountLength <= this.props.customerDetail.pageSize) {
+            return; 
+        }
+
         let pageIndex = this.props.customerDetail.pageIndex; 
         let prevButton = null; 
         let nextButton = null; 
