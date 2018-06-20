@@ -7,6 +7,7 @@ import { bindActionCreators } from 'redux';
 import { CreateAccountForm } from "./CreateAccountForm";
 import configureStore from '../configureStore';
 import { CustomerAccount } from '../store/Customer';
+import { PageHeader, Table } from 'react-bootstrap';
 
 
 // At runtime, Redux will merge together...
@@ -39,22 +40,29 @@ export class CustomerDetail extends React.Component<CustomerDetailProp, {}>{
 
 
         return (
-            <div className="panel">
+            <div className="panel" id="toti">
+                <PageHeader style={{marginTop: "5px"}}>
+                    Customer Details
+                </PageHeader>
                 <div className="panel">
                     <div>
-                        Name: {this.props.customerDetail.name}
+                        <strong>Name: </strong>{this.props.customerDetail.name}
                     </div>
                     <div>
-                        Total Balance: {this.props.customerDetail.totalBalance}
+                        <strong>Total Balance: </strong>{this.props.customerDetail.totalBalance}
                     </div>
                     <div>
-                        OpenDate: {this.props.customerDetail.openDate}
+                        <strong>OpenDate: </strong>{this.props.customerDetail.openDate}
                     </div>
+                    <div>
+                        <strong>Accounts: </strong>{this.props.customerDetail.accountLength}
+                    </div>
+
                 </div>
                 <div>
-                    <table className='table panel'>
-                        <thead>
-                            <tr>
+                    <Table>
+                        <thead style={{ backgroundColor: "black", borderColor: "black", borderRadius: "10", color:"#ccc"}}>
+                            <tr className="header">
                                 <th> Id </ th>
                                 <th> AccountType </th>
                                 <th> ClassCode </th>
@@ -77,7 +85,7 @@ export class CustomerDetail extends React.Component<CustomerDetailProp, {}>{
                                     </tr>
                                 )}
                         </tbody>
-                    </table>
+                    </Table>
                     {this.renderAccountPagination()}
                 </div>
                 

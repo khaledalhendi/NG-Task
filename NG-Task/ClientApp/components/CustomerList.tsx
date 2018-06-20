@@ -83,7 +83,7 @@ export class CustomerList extends React.Component<CustomerListPros, CustomerList
     }
 
     render() {
-        return <div>
+        return <div style={{marginTop:"32px"}}>
             {this.renderNgSearchBarInput()}
             <div className="list-group">
                 Results: {this.state.filtered.length} 

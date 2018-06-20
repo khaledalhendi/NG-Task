@@ -5,7 +5,7 @@ import { bindActionCreators } from "redux";
 import { connect } from 'react-redux';
 import { CreateCustomerAccount } from "../store/Customer";
 import { findDOMNode } from 'react-dom';
-import { Form, FormGroup, ControlLabel, InputGroup, FormControl, Col, DropdownButton, MenuItem } from 'react-bootstrap';
+import { Form, FormGroup, ControlLabel, InputGroup, FormControl, Col, DropdownButton, MenuItem, PageHeader } from 'react-bootstrap';
 import configureStore from '../configureStore';
 
 type CreateAccountProp =
@@ -42,10 +42,11 @@ export class CreateAccountForm extends React.Component<CreateAccountProp, Create
     }
 
     render() {
-        return <Form className="panel" onSubmit={e => e.preventDefault()}>
-            <div>
-                Create Account
-            </div>
+        return <div>
+            <PageHeader>
+                <small>Create Account</small>
+            </PageHeader>
+            <Form className="panel" onSubmit={e => e.preventDefault()}>
             <FormGroup className="panel">
             <ControlLabel>AccountType</ControlLabel>
                 <select className="form-control" value={this.state.selectedAccountType != null ? this.state.selectedAccountType : ''}
@@ -88,7 +89,8 @@ export class CreateAccountForm extends React.Component<CreateAccountProp, Create
             <div>
                 <button className="btn btn-success center-block" onClick={this.CreateClickHandler}>Create</button>
             </div>
-        </Form>;
+            </Form>
+        </div>;
     };
 
     renderOptions(options: string[])
