@@ -77,7 +77,7 @@ export class CustomerList extends React.Component<CustomerListPros, CustomerList
     renderNgSearchBarInput() {
         return (<input
             onInput={this.handleInput}
-            placeholder="temp"
+            placeholder="Search..."
         />);
         
     }
@@ -88,7 +88,11 @@ export class CustomerList extends React.Component<CustomerListPros, CustomerList
             <div className="list-group">
                 Results: {this.state.filtered.length} 
                 {this.state.filtered.map(c =>
-                    <Link key={c.id} className={"btn list-group-item" + (this.props.selectedId == c.id ? " disabled" : "")} to={`/${c.id}`}>
+                    <Link key={c.id}
+                        to={`/${c.id}`}
+                        disabled={this.props.selectedId == c.id}
+                        className={"btn list-group-item" + (this.props.selectedId == c.id ? " bs-callout bs-callout-primary" : "")}
+                    >
                         {c.name}
                     </Link>
                 )}
