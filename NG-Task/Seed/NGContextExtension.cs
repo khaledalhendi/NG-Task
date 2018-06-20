@@ -169,29 +169,34 @@ namespace NG_Task.Seed
             return new Currency[]
             {
                 new Currency{
-                    Name= "Egyption Pund",
-                    ISO= "EGP", 
-                    Multiplier = 1
+                    Name = "Egyption Pund",
+                    ISO = "EGP", 
+                    Multiplier = 1,
+                    Culture = "ar-EG"
                 },
                 new Currency{
-                    Name= "Kuwaiti Dinar",
-                    ISO= "KWD",
-                    Multiplier = 0.017m
+                    Name = "Kuwaiti Dinar",
+                    ISO = "KWD",
+                    Multiplier = 0.017m,
+                    Culture = "ar-KW"
                 },
                 new Currency{
-                    Name= "United States Dollar",
-                    ISO= "USD",
-                    Multiplier = 0.056m
+                    Name = "United States Dollar",
+                    ISO = "USD",
+                    Multiplier = 0.056m,
+                    Culture = "en-US"
                 },
                 new Currency{
-                    Name= "Saudi Riyal",
-                    ISO= "SAR",
-                    Multiplier = 0.21m
+                    Name = "Saudi Riyal",
+                    ISO = "SAR",
+                    Multiplier = 0.21m,
+                    Culture = "ar-SA"
                 },
                 new Currency{
-                    Name= "Euro",
-                    ISO= "EUR",
-                    Multiplier = 0.048m
+                    Name = "Euro",
+                    ISO = "EUR",
+                    Multiplier = 0.048m,
+                    Culture = "en-GB"
                 },
             };
 

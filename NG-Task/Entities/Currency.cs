@@ -21,5 +21,9 @@ namespace NG_Task.Entities
         [Required]
         [Column(TypeName = "decimal(21,6)")]
         public decimal Multiplier { get; set; }
+
+        [Required]
+        [Column(TypeName = "varchar(5)")]
+        public string Culture { get; set; }
     }
 }

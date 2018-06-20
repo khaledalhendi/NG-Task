@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
@@ -62,7 +63,7 @@ namespace NG_Task
 
                 c.CreateMap<Account, AccountDto>().AfterMap((s, d) => 
                 {
-                    d.Balance = s.Balance.ToString("0000.00");
+                    d.Balance = s.Balance.ToString("c", CultureInfo.CreateSpecificCulture(s.Currency.Culture));
                 });
                 c.CreateMap<AccountCreateDto, Account>();
 

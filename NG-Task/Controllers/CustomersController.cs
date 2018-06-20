@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -40,11 +41,11 @@ namespace NG_Task.Controllers
                 return NotFound();
             }
 
-            const string localCurrencyISO = "EGP"; 
+            Currency localCurrency = NGContext.Currencies.Where(c => MathF.Abs((float)(c.Multiplier - 1m)) < 0.0001f).SingleOrDefault(); 
             CustomerDetailDto customerDto = AutoMapper.Mapper.Map<CustomerDetailDto>(customer);
 
-            decimal totalBalance = customer.Accounts.Sum(a => a.Balance / a.Currency.Multiplier); 
-            customerDto.TotalBalance = totalBalance.ToString("0000.00 " + localCurrencyISO);
+            decimal totalBalance = customer.Accounts.Sum(a => a.Balance / a.Currency.Multiplier);
+            customerDto.TotalBalance = totalBalance.ToString("c", CultureInfo.CreateSpecificCulture(localCurrency.Culture)); 
 
             customerDto.AccountLength = customer.Accounts.Count();
 
@@ -111,7 +112,7 @@ namespace NG_Task.Controllers
         [HttpGet("{customerId}/account/{accountId}", Name = "GetAccount")]
         public IActionResult GetCustomerAccount(int customerId, int accountId)
         {
-            Customer customer = NGContext.Customers.Include(c => c.Accounts).FirstOrDefault(c => c.Id == customerId);
+            Customer customer = NGContext.Customers.Include(c => c.Accounts).ThenInclude(a => a.Currency).FirstOrDefault(c => c.Id == customerId);
 
             if (customer == null)
             {
@@ -145,7 +146,7 @@ namespace NG_Task.Controllers
 
         private IEnumerable<AccountDto> PickAccounts(int customerId, int pageIndex, int pageSize = DefaultPageSize)
         {
-            Customer customer = NGContext.Customers.Include(c => c.Accounts).FirstOrDefault(c => c.Id == customerId);
+            Customer customer = NGContext.Customers.Include(c => c.Accounts).ThenInclude(a => a.Currency).FirstOrDefault(c => c.Id == customerId);
 
             if (customer == null)
             {
