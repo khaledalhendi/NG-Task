@@ -74,11 +74,11 @@ export class CustomerDetail extends React.Component<CustomerDetailProp, {}>{
                         </thead>
                         <tbody>
                             {tableData.map((a,i) =>
-                                <tr key={a.id} style={{ lineHeight: "50px", height: "50px" }}>
-                                    <td className="text-center">{a.balance ? i : null}</td>
-                                    <td className="text-center">{a.balance ? a.id : null}</td>
+                                <tr key={i} style={{ lineHeight: "50px", height: "50px" }}>
+                                    <td className="text-center">{a.balance ? 1+i + ((this.props.customerDetail.pageIndex-1) * this.props.customerDetail.pageSize): null}</td>
                                     <td className="text-center">{a.accountType}</td>
                                     <td className="text-center">{a.classCode}</td>
+                                    <td className="text-center">{a.balance ? a.id : null}</td>
                                     <td className="text-center">{a.balance}</td>
                                     <td className="text-center">{a.currencyISO}</td>
                                     <td className="text-center">
