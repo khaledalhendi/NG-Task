@@ -63,23 +63,23 @@ export class CustomerDetail extends React.Component<CustomerDetailProp, {}>{
                     <Table>
                         <thead style={{ backgroundColor: "black", borderColor: "black", borderRadius: "10", color:"#ccc"}}>
                             <tr className="header">
-                                <th> Id </ th>
-                                <th> AccountType </th>
-                                <th> ClassCode </th>
-                                <th> Balance </th>
-                                <th> Currency </th>
-                                <th id="deleteButton"> </th>
+                                <th className="text-center" style={{ minWidth: "50px" }}                   > Id </ th>
+                                <th className="text-center" style={{ minWidth: "30px", maxWidth: "50px" }} > Type </th>
+                                <th className="text-center" style={{ minWidth: "30px", maxWidth: "50px" }} > Class Code </th>
+                                <th className="text-center" style={{ minWidth: "80px" }}                   > Balance </th>
+                                <th className="text-center" style={{ minWidth: "30px", maxWidth: "50px" }} > Currency </th>
+                                <th id="deleteButton" style={{ minWidth: "40px", maxWidth: "50px" }}> </th>
                             </tr>
                         </thead>
                         <tbody>
                             {tableData.map(a =>
-                                <tr key={a.id} style={{ lineHeight: "50px", height: "50px"}}> 
-                                    <td>{a.balance ? a.id : null}</td>
-                                        <td>{a.accountType}</td>
-                                        <td>{a.classCode}</td>
-                                        <td>{a.balance}</td>
-                                        <td>{a.currencyISO}</td>
-                                    <td>
+                                <tr key={a.id} style={{ lineHeight: "50px", height: "50px" }}>
+                                    <td className="text-center" style={{ minWidth: "50px" }}                    >{a.balance ? a.id : null}</td>
+                                    <td className="text-center" style={{ minWidth: "30px", maxWidth: "50px" }}  >{a.accountType}</td>
+                                    <td className="text-center" style={{ minWidth: "30px", maxWidth: "50px" }}  >{a.classCode}</td>
+                                    <td className="text-center" style={{ minWidth: "80px" }}                    >{a.balance}</td>
+                                    <td className="text-center" style={{ minWidth: "30px", maxWidth: "50px" }}  >{a.currencyISO}</td>
+                                    <td  style={{ minWidth: "40px", maxWidth: "50px"  }} >
                                         {a.balance ? <button className="btn btn-danger" onClick={(e) => this.props.onDelete(a.id)}> Delete </button> : ""}
                                         </ td>
                                     </tr>
