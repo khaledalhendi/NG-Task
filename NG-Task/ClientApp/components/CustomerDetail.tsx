@@ -61,7 +61,7 @@ export class CustomerDetail extends React.Component<CustomerDetailProp, {}>{
                 </div>
                 <div className="panel" style={{ borderColor: "black" }}>
                     <Table >
-                        <thead style={{ backgroundColor: "black", borderColor: "black", borderRadius: "10", color:"#ccc"}}>
+                        <thead style={{ backgroundColor: "black", borderColor: "black", borderRadius: "10px", color:"#ccc"}}>
                             <tr className="header">
                                 <th className="text-center" style={{ minWidth: "10px", maxWidth: "20px" }} >#</th>
                                 <th className="text-center" style={{ minWidth: "30px", maxWidth: "50px" }} >Type</th>
@@ -101,7 +101,7 @@ export class CustomerDetail extends React.Component<CustomerDetailProp, {}>{
         let pagationItems = [];
 
         //previos
-        pagationItems.push(<li className={pageIndex <= 1 ? "disabled" : ""} >
+        pagationItems.push(<li key="prev" className={pageIndex <= 1 ? "disabled" : ""} >
             <Link to={`/${this.props.customerDetail.id}/${pageIndex <= 1 ? pageIndex : pageIndex - 1}`} disabled={pageIndex <= 1}  ><span className="glyphicon glyphicon-menu-left" /></Link>
         </li>
         );
@@ -109,14 +109,14 @@ export class CustomerDetail extends React.Component<CustomerDetailProp, {}>{
         //pages 
         for (let i = 1; i <= lastPage; i++) {
             pagationItems.push(
-                <li className={i === pageIndex ? "active" : ""}>
+                <li key={i} className={i === pageIndex ? "active" : ""}>
                     <Link to={`/${this.props.customerDetail.id}/${i}`} disabled={i === pageIndex}>{i}</Link>
                 </li>
             );
         }
 
         //next 
-        pagationItems.push(<li className={pageIndex >= lastPage ? "disabled" : ""}>
+        pagationItems.push(<li key="next" className={pageIndex >= lastPage ? "disabled" : ""}>
             <Link to={`/${this.props.customerDetail.id}/${pageIndex >= lastPage ? pageIndex : pageIndex + 1}`} disabled={pageIndex >= lastPage}><span className="glyphicon glyphicon-menu-right" /></Link>
         </li>
         );
