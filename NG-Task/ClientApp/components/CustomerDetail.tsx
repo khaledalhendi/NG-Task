@@ -59,27 +59,29 @@ export class CustomerDetail extends React.Component<CustomerDetailProp, {}>{
                     </div>
 
                 </div>
-                <div className="panel">
-                    <Table>
+                <div className="panel" style={{ borderColor: "black" }}>
+                    <Table >
                         <thead style={{ backgroundColor: "black", borderColor: "black", borderRadius: "10", color:"#ccc"}}>
                             <tr className="header">
-                                <th className="text-center" style={{ minWidth: "50px" }}                   > Id </ th>
-                                <th className="text-center" style={{ minWidth: "30px", maxWidth: "50px" }} > Type </th>
-                                <th className="text-center" style={{ minWidth: "30px", maxWidth: "50px" }} > Class Code </th>
-                                <th className="text-center" style={{ minWidth: "80px" }}                   > Balance </th>
-                                <th className="text-center" style={{ minWidth: "30px", maxWidth: "50px" }} > Currency </th>
-                                <th id="deleteButton" style={{ minWidth: "40px", maxWidth: "50px" }}> </th>
+                                <th className="text-center" style={{ minWidth: "10px", maxWidth: "20px" }} >#</th>
+                                <th className="text-center" style={{ minWidth: "30px", maxWidth: "50px" }} >Type</th>
+                                <th className="text-center" style={{ minWidth: "80px", maxWidth: "80px" }} >Class Code</th>
+                                <th className="text-center" style={{ minWidth: "50px" }}                   >Account Number</ th>
+                                <th className="text-center" style={{ minWidth: "80px" }}                   >Balance</th>
+                                <th className="text-center" style={{ minWidth: "30px", maxWidth: "50px" }} >Currency</th>
+                                <th id="deleteButton" style={{ minWidth: "30px", maxWidth: "40px" }}> </th>
                             </tr>
                         </thead>
                         <tbody>
-                            {tableData.map(a =>
+                            {tableData.map((a,i) =>
                                 <tr key={a.id} style={{ lineHeight: "50px", height: "50px" }}>
-                                    <td className="text-center" style={{ minWidth: "50px" }}                    >{a.balance ? a.id : null}</td>
-                                    <td className="text-center" style={{ minWidth: "30px", maxWidth: "50px" }}  >{a.accountType}</td>
-                                    <td className="text-center" style={{ minWidth: "30px", maxWidth: "50px" }}  >{a.classCode}</td>
-                                    <td className="text-center" style={{ minWidth: "80px" }}                    >{a.balance}</td>
-                                    <td className="text-center" style={{ minWidth: "30px", maxWidth: "50px" }}  >{a.currencyISO}</td>
-                                    <td  style={{ minWidth: "40px", maxWidth: "50px"  }} >
+                                    <td className="text-center">{a.balance ? i : null}</td>
+                                    <td className="text-center">{a.balance ? a.id : null}</td>
+                                    <td className="text-center">{a.accountType}</td>
+                                    <td className="text-center">{a.classCode}</td>
+                                    <td className="text-center">{a.balance}</td>
+                                    <td className="text-center">{a.currencyISO}</td>
+                                    <td className="text-center">
                                         {a.balance ? <button className="btn btn-danger" onClick={(e) => this.props.onDelete(a.id)}> Delete </button> : ""}
                                         </ td>
                                     </tr>
@@ -122,7 +124,7 @@ export class CustomerDetail extends React.Component<CustomerDetailProp, {}>{
         //pagation element
         const paginationBasic = (
             <div className="text-center">
-                <Pagination bsSize="medium" style={{ backgroundColor:"green", marginTop: "0px", marginBottom: "10px" }}>
+                <Pagination bsSize="medium" style={{ marginTop: "0px", marginBottom: "10px" }}>
                     {pagationItems}
                 </Pagination>
             </div>
