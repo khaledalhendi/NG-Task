@@ -9,10 +9,6 @@
     <PublishDir>$(OutDir)_PublishedWebsites\NetCoreWebApp\</PublishDir>
     <Configurations>Debug;Release;Production</Configurations>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <DefineConstants>TRACE;RELEASE;NETCOREAPP2_0</DefineConstants>
-    <WarningLevel>0</WarningLevel>
-  </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="AutoMapper" Version="6.2.2" />
