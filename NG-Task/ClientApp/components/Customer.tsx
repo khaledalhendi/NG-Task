@@ -110,7 +110,7 @@ class Customer extends React.Component<CustomerProps, {}> {
 
     accountOnDeleteHandler = (accountId: number) => {
         let customerId = parseInt(this.props.match.params.customerId);
-        if (confirm(`Do you really want to delete customer's ${customerId} account: ${accountId}?`)) {
+        if (confirm(`Do you really want to delete account: ${("000000000000" + accountId).substr((accountId + "").length)}?`)) {
             this.props.deleteAccount(customerId, accountId);
         }
     }
