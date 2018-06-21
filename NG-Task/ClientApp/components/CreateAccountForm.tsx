@@ -13,6 +13,7 @@ type CreateAccountProp =
     & {
         AccountTypeSelected: (string) => void,
         AddAccount: (CreateCustomerAccount) => void,
+        ShouldReset: boolean,
     };
 
 interface CreateAccountFormState
@@ -30,7 +31,7 @@ export class CreateAccountForm extends React.Component<CreateAccountProp, Create
         super(props); 
     }
 
-    componentWillMount()
+    componentWillMount() 
     {
         this.AppendState(
             {
@@ -39,6 +40,12 @@ export class CreateAccountForm extends React.Component<CreateAccountProp, Create
                 selectedClassCode: null,
                 selectedCurrencyISO: null
             });
+    }
+
+    componentWillReceiveProps(nextProps: CreateAccountProp) {
+        if (nextProps.ShouldReset && nextProps.ShouldReset != this.props.ShouldReset) {
+            this.resetForm(); 
+        }
     }
 
     render() {
@@ -100,6 +107,10 @@ export class CreateAccountForm extends React.Component<CreateAccountProp, Create
         ));
     }
 
+    private resetForm() {
+        this.setState({ selectedAccountType: null, selectedClassCode: null, selectedCurrencyISO: null, balanceInput: null });
+    }
+
     //helper function
     private AppendState(newState: CreateAccountFormState)
     {
@@ -107,7 +118,7 @@ export class CreateAccountForm extends React.Component<CreateAccountProp, Create
     }
 
     OnBalanceSubmitHandler = (target) => {
-        let enterKeyCode = 13; 
+        let enterKeyCode = 13; //magic 
         if (target.charCode == enterKeyCode) {
             target.preventDefault();
         }
@@ -116,7 +127,7 @@ export class CreateAccountForm extends React.Component<CreateAccountProp, Create
     OnAccountTypeChangeHandler = (event: React.FormEvent<HTMLSelectElement>) => {
         let accountType: string = "" + event.currentTarget.value;
 
-        //populars classCodes
+        //populate classCodes
         this.props.AccountTypeSelected(accountType); 
 
         this.AppendState({ selectedAccountType: accountType, selectedClassCode: null });
@@ -126,16 +137,12 @@ export class CreateAccountForm extends React.Component<CreateAccountProp, Create
 
         let classCode = event.currentTarget.value;
         this.AppendState({ selectedClassCode: classCode });
-
-        //this.props.ClassCodeSelected(classCode); 
     }
 
     OnCurrencyChangeHandler = (event: React.FormEvent<HTMLSelectElement>) => {
 
         let currencyISO = event.currentTarget.value;
         this.AppendState({ selectedCurrencyISO: currencyISO });
-
-        //this.props.CurrencySelected(currencyISO); 
     }
 
     BalanceChangeHandler = (event: React.FormEvent<HTMLInputElement>) => {
@@ -144,7 +151,6 @@ export class CreateAccountForm extends React.Component<CreateAccountProp, Create
 
         const balanceInput = (input.validity.valid) ? input.value : (this.state.balanceInput);
 
-        //this.props.BalanceUpdated(+balanceInput); 
         this.AppendState({ balanceInput });
 
         return false; 
@@ -163,33 +169,6 @@ export class CreateAccountForm extends React.Component<CreateAccountProp, Create
             }; 
 
         this.props.AddAccount(account);
+        this.resetForm(); 
     }
-
-
 }
-
-//const mapStateToProps = (state: ApplicationState): CreateAccountProp => {
-//    return {
-//        accountTypes: state.accountForm.accountTypes,
-//        classCodes:  state.accountForm.classCodes,
-//        currencies:  state.accountForm.currencies,
-
-//        selectedAccountType: state.accountForm.selectedAccountType,
-//        selectedclassCode:  state.accountForm.selectedclassCode,
-//        selectedcurrency: state.accountForm.selectedcurrency,
-//    } as any
-//};
-
-//const mapDispatchToProps = (dispatch: any): any => {
-//    return bindActionCreators({
-//        requestAccountTypes: CreateAccount.actionCreators.requestAccountTypes,
-//        requestClassCodes: CreateAccount.actionCreators.requestClassCodes,
-//        requestCurrencies: CreateAccount.actionCreators.requestCurrencies,
-//        selectAccountTyoe: CreateAccount.actionCreators.selectAccountTyoe
-//    }, dispatch);
-//};
-
-//export default connect(
-//    mapStateToProps,
-//    mapDispatchToProps
-//)(CreateAccountForm) as any;

@@ -87,7 +87,8 @@ class Customer extends React.Component<CustomerProps, {}> {
                 <CustomerDetail customerDetail={this.props.customerDetail} onDelete={this.accountOnDeleteHandler} />
             </div>
             <div>
-                <CreateAccountForm {...this.props.accountForm} {...this.formActions} />
+                <CreateAccountForm {...this.props.accountForm} {...this.formActions}
+                    ShouldReset={this.props.isLoadingCustomerDetail} />
             </div>
         </div>;
     }
@@ -137,8 +138,8 @@ const mapStateToProps = (state: ApplicationState): CustomerProps => {
         accountForm: state.customer.accountForm,
         selectedCustomer: state.customer.selectedCustomer,
         accountsPageIndex: state.customer.accountsPageIndex,
-        isLoadingCustomerDetailc: state.customer.isLoadingCustomerDetail,
-    } as any
+        isLoadingCustomerDetail: state.customer.isLoadingCustomerDetail,
+    } as CustomerProps
 };
 
 const mapDispatchToProps = (dispatch: any): any => {
@@ -151,7 +152,7 @@ const mapDispatchToProps = (dispatch: any): any => {
         requestAccountTypes: CustomerState.actionCreators.requestAccountTypes,
         requestClassCodes: CustomerState.actionCreators.requestClassCodes,
         requestCurrencies: CustomerState.actionCreators.requestCurrencies,
-    }, dispatch);
+     } as typeof CustomerState.actionCreators, dispatch);
 };
 
 export default connect(
