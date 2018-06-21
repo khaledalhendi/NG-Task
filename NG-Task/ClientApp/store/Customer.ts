@@ -340,7 +340,8 @@ export const reducer: Reducer<CustomerState> = (state: CustomerState, incomingAc
         case 'REQUEST_ACCOUNT_TYPES':
             return {
                 ...state,
-                isLoading: true
+                isLoading: true,
+                classCodes: [], 
             };
         case 'RECEIVE_ACCOUNT_TYPES':
             return {
@@ -348,7 +349,7 @@ export const reducer: Reducer<CustomerState> = (state: CustomerState, incomingAc
                 isLoading: false,
                 accountForm: {
                     ...state.accountForm,
-                    accountTypes: action.accountTypes
+                    accountTypes: action.accountTypes,
                 },
             };
 

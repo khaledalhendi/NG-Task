@@ -72,7 +72,7 @@ export class CreateAccountForm extends React.Component<CreateAccountProp, Create
                 </FormGroup>
                 <FormGroup validationState={this.state.isClassCodeInvalid ? "error" : null}>
                     <ControlLabel>Class Code</ControlLabel>
-                    <select className="form-control" value={this.state.selectedClassCode != null ? this.state.selectedClassCode : ""}
+                    <select disabled={!this.state.selectedAccountType} className="form-control" value={this.state.selectedClassCode != null ? this.state.selectedClassCode : ""}
                         onChange={this.OnClassCodeChangeHandler}>
                         {this.state.selectedClassCode == null ? <option value=''></option> : ''}
                         {this.renderOptions(this.props.classCodes)}
