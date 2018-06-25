@@ -18,11 +18,7 @@ interface CustomerListState {
     filtered: CustomerSummary[];
 }
 export class CustomerList extends React.Component<CustomerListPros, CustomerListState>{
-   /* handleChange(value) {
-        //console.log(typeof value)
-        //console.log(value);
-        this.filteredCustomers(value);
-    }*/
+  
     handleInput=(value) => {
         console.log(value.currentTarget.value);
         this.filteredCustomers(value.currentTarget.value);
@@ -30,55 +26,47 @@ export class CustomerList extends React.Component<CustomerListPros, CustomerList
 
     componentWillMount() {
         this.setState({ filtered: this.props.customers });
-        //this.filteredCustomers(null);
     }
-    filteredCustomers(filterInput: string) {
-        filterInput = filterInput.toLocaleLowerCase(); 
-        //let filtered: CustomerSummary[] = [{ name: filterInput, id: 0, branch: "b1" }, { name: "2", id: 1, branch: "b2" }];
-        let filtered: CustomerSummary[] = null;
+    isMatch(c: CustomerSummary, filterInput: string): boolean{
+        let cName = c.name.toLocaleLowerCase();
+        let cId = c.id.toString();
+        let cBranch = c.branch.toLocaleLowerCase();
+
+        if (cName.indexOf(filterInput) >= 0 || cId === filterInput || cBranch.indexOf(filterInput) >= 0) {
+            return (true)
+        } else {
+            return (false)
+        }
+    }
+    flushArray(c: CustomerSummary[]) {
+        c = [];
+    }
+    filteredCustomers(filterInput: string): void{
+        filterInput = filterInput.toLocaleLowerCase();
+        let filtered: CustomerSummary[] = [];
 
         if (filterInput === null) {
-             filtered = this.props.customers;
+            filtered = this.props.customers;
         } else {
-            filtered = []; //to empty the array
+           
             for (var i = 0; i < this.props.customers.length; i++) {
                 let c = this.props.customers[i];
-                if (c.name.toLocaleLowerCase().indexOf(filterInput) >= 0) {
+              
+                if (this.isMatch(c, filterInput)) {
                     filtered.push(c)
                 }
-            }} 
+            }
+        }
         //do filter logic 
         this.setState({ filtered }); //this means filterd global = local 
     }
 
-    /*
-    renderNgSearchBar() {
-        var inBox = this.handleChange
-        //console.log(inBox)
-        return (<div className="app">
-            <div className="app__content">
-                <div className="content__search content__search--with-full_name">
-                
-                    <div className="search__component">
-                      
-                        <Search
-                            data={this.props.customers}
-                            onChange={this.handleChange.bind(this)}
-                            placeholder="Search By Customer RIM/Name"
-                            class="search-class"
-                            searchKey="name"
-                    />
-                
-                    </div>
-                </div>
-            </div>
-        </div>);
-    }*/
+
    
     renderNgSearchBarInput() {
         return (<input className="form-control"
             onInput={this.handleInput}
-            placeholder="Search..."
+            placeholder="Search By Customer RIM/Name"
         />);
         
     }
