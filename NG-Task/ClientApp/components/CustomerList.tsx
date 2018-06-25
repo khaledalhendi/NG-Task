@@ -26,7 +26,6 @@ export class CustomerList extends React.Component<CustomerListPros, CustomerList
 
     componentWillMount() {
         this.setState({ filtered: this.props.customers });
-        //this.filteredCustomers(null);
     }
     isMatch(c: CustomerSummary, filterInput: string): boolean{
         let cName = c.name.toLocaleLowerCase();
@@ -39,16 +38,17 @@ export class CustomerList extends React.Component<CustomerListPros, CustomerList
             return (false)
         }
     }
-
+    flushArray(c: CustomerSummary[]) {
+        c = [];
+    }
     filteredCustomers(filterInput: string): void{
         filterInput = filterInput.toLocaleLowerCase();
-        //let filtered: CustomerSummary[] = [{ name: filterInput, id: 0, branch: "b1" }, { name: "2", id: 1, branch: "b2" }];
-        let filtered: CustomerSummary[] = null;
+        let filtered: CustomerSummary[] = [];
 
         if (filterInput === null) {
             filtered = this.props.customers;
         } else {
-            filtered = []; //to empty the array
+           
             for (var i = 0; i < this.props.customers.length; i++) {
                 let c = this.props.customers[i];
               
