@@ -8,22 +8,32 @@ namespace NG_Task.Seed
 {
     public static class NGContextExtension
     {
-        public static void EnsureSeedDatabase(this NGContext context)
+        public static void RestSeed(this NGContext context)
         {
-            if (context.AccountTypes.Any() == false)
-                SeedAccountTypes(context);
+            //delete tables
+            context.AccountTypes.RemoveRange(context.AccountTypes); 
+            context.ClassCodes.RemoveRange(context.ClassCodes); 
+            context.Currencies.RemoveRange(context.Currencies);
+            context.Customers.RemoveRange(context.Customers); 
+            context.Accounts.RemoveRange(context.Accounts);
 
-            if (context.ClassCodes.Any() == false)
-                SeedClassCodes(context);
+            context.SaveChanges();
+            
+            //seed lookup tables
+            SeedAccountTypes(context);
+            context.SaveChanges();
+            SeedClassCodes(context);
+            SeedCurrencies(context);
 
-            if (context.Currencies.Any() == false)
-                SeedCurrencies(context);
+            context.SaveChanges();
 
-            if (context.Customers.Any() == false)
-                SeedCustomers(context);
-
-            if (context.Accounts.Any() == false)
-                SeedAcconuts(context);
+            //seed customers tables
+            SeedCustomers(context);
+            context.SaveChanges();
+            
+            //seed accounts tables (depends on customer
+            SeedAcconuts(context);
+            context.SaveChanges();
         }
       
         #region AccountType
@@ -32,7 +42,6 @@ namespace NG_Task.Seed
             IEnumerable<AccountType> AccountTypes = CreateAccountTypes();
 
             context.AccountTypes.AddRange(AccountTypes);
-            context.SaveChanges();
         }
 
         private static IEnumerable<AccountType> CreateAccountTypes()
@@ -51,7 +60,7 @@ namespace NG_Task.Seed
             IEnumerable<ClassCode> ClassCodes = CreateClassCodes(context.AccountTypes.ToList());
 
             context.ClassCodes.AddRange(ClassCodes);
-            context.SaveChanges();
+            
         }
 
         private static IEnumerable<ClassCode> CreateClassCodes(IEnumerable<AccountType> accountTypes)
@@ -84,7 +93,7 @@ namespace NG_Task.Seed
             IEnumerable<Customer> Customers = CreateCustomers();
 
             context.Customers.AddRange(Customers);
-            context.SaveChanges();
+            
         }
 
         private static IEnumerable<Customer> CreateCustomers()
@@ -121,7 +130,7 @@ namespace NG_Task.Seed
             IEnumerable<Account> Accounts = CreateAccounts(context, context.Customers.ToList());
 
             context.Accounts.AddRange(Accounts);
-            context.SaveChanges();
+            
         }
 
         private static IEnumerable<Account> CreateAccounts(NGContext context, IEnumerable<Customer> customers)
@@ -161,7 +170,6 @@ namespace NG_Task.Seed
             IEnumerable<Currency> Currencys = CreateCurrencies();
 
             context.Currencies.AddRange(Currencys);
-            context.SaveChanges();
         }
 
         private static IEnumerable<Currency> CreateCurrencies()
