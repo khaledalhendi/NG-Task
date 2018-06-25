@@ -50,8 +50,6 @@ namespace NG_Task
                 app.UseExceptionHandler("/Home/Error");
             }
 
-            context.EnsureSeedDatabase();
-
             AutoMapper.Mapper.Initialize(c => {
 
                 c.CreateMap<Customer, CustomerDetailDto>().AfterMap((s, d) =>
