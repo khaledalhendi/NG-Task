@@ -14,7 +14,7 @@ namespace NG_Task.Controllers
         [Route("Index/{id?}/{pageIndex?}")]
         public IActionResult Index(int? id, int? pageIndex)
         {
-            return View(new HomeModel() { Env=Startup.ENV?? "Null"} );
+            return View(new HomeModel() { Env=((Startup.ENV?? "Null")+ " - "  + (Startup.ENV_FILE?? "NO_FILE") ) } );
         }
 
         public IActionResult Error()

@@ -17,7 +17,8 @@ namespace NG_Task
 {
     public class Startup
     {
-        public static string ENV; 
+        public static string ENV;
+        public static string ENV_FILE; 
 
         public Startup(IConfiguration configuration)
         {
@@ -31,6 +32,7 @@ namespace NG_Task
         {
             services.AddMvc();
 
+            ENV_FILE = Configuration["ENV"]; 
             string connectionString = Configuration["sqlconnection"]; 
             services.AddDbContext<NGContext>(o => o.UseSqlServer(connectionString));
         }
