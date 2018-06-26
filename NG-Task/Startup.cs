@@ -17,6 +17,8 @@ namespace NG_Task
 {
     public class Startup
     {
+        public static string ENV; 
+
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
@@ -36,6 +38,7 @@ namespace NG_Task
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, NGContext context)
         {
+            ENV = env.EnvironmentName; 
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
