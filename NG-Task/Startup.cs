@@ -20,20 +20,22 @@ namespace NG_Task
         public static string ENV;
         public static string ENV_FILE; 
 
+        public IConfiguration Configuration { get; }
+
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
         }
-
-        public IConfiguration Configuration { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMvc();
 
-            ENV_FILE = Configuration["ENV"]; 
-            string connectionString = Configuration["sqlconnection"]; 
+            string connectionString = Configuration["SQLSERVER_CONNECTION_STRING"];
+
+            ENV_FILE = Configuration["ENV"] + "SQL " + connectionString; 
+
             services.AddDbContext<NGContext>(o => o.UseSqlServer(connectionString));
         }
 
