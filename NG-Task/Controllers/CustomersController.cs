@@ -10,8 +10,7 @@ using NG_Task.Repository;
 
 namespace NG_Task.Controllers
 {
-    //[Produces("application/json")]
-    [Route("api/customers")]
+    [Route("api/customers", Name ="Customers")]
     public class CustomersController : Controller
     {
         const int DefaultPageIndex = 1;
@@ -57,62 +56,6 @@ namespace NG_Task.Controllers
             customerDto.PageSize = DefaultPageSize; 
             return Ok(customerDto);
         }
-
-        [HttpPost("{customerId}/account")]
-        public IActionResult AddAccount(int customerId, [FromBody] AccountCreateDto accountCreateDto)
-        {
-            Customer customer = UnitOfWork.CustomerRepository.Get(customerId);
-
-            if (customer == null)
-            {
-                return NotFound();
-            }
-
-            if (accountCreateDto == null)
-            {
-                return BadRequest();
-            }
-
-            Account account = AutoMapper.Mapper.Map<Account>(accountCreateDto);
-            account.CustomerId = customerId;
-
-            UnitOfWork.AccountRepository.Add(account);
-            UnitOfWork.Complete(); 
-
-            return GetCustomer(customerId);
-        }
-
-        [HttpDelete("{customerId}/account/{accountId}")]
-        public IActionResult DeleteAccount(int customerId, int accountId)
-        {
-            var account = UnitOfWork.AccountRepository.Get(accountId); 
-
-            if(account == null)
-            {
-                return NotFound(); 
-            }
-
-            UnitOfWork.AccountRepository.Remove(account);
-            UnitOfWork.Complete();
-
-            return GetCustomer(customerId); 
-        }
-
-        [HttpGet("{customerId}/accounts/{pageIndex?}", Name = "GetAccounts")]
-        public IActionResult GetCustomerAccounts(int customerId, int pageIndex = DefaultPageIndex)
-        {
-            Customer customer = UnitOfWork.CustomerRepository.Get(customerId); 
-
-            if (customer == null)
-            {
-                return NotFound();
-            }
-
-            IEnumerable<Account> accounts = UnitOfWork.AccountRepository.GetPagedAccounts(customerId, pageIndex, DefaultPageSize);
-            IEnumerable<AccountDto> accountDtos = AutoMapper.Mapper.Map<IEnumerable<AccountDto>>(accounts); 
-
-            return Ok();
-        }
-
+       
     }
 }

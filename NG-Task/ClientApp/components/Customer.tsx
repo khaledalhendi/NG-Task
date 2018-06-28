@@ -7,7 +7,7 @@ import { bindActionCreators } from 'redux';
 import { CustomerList } from "./CustomerList";
 import { CustomerDetail } from "./CustomerDetail";
 import { CreateAccountForm } from "./CreateAccountForm";
-import { Modal, Button } from 'react-bootstrap/lib';
+import { Modal, Button, Alert } from 'react-bootstrap/lib';
 
 // At runtime, Redux will merge together...
 type CustomerProps =
@@ -15,10 +15,18 @@ type CustomerProps =
     & typeof CustomerState.actionCreators      // ... plus action creators we've requested
     & RouteComponentProps<{ customerId: string, pageIndex: string}>; // ... plus incoming routing parameters
 
-class Customer extends React.Component<CustomerProps, {}> {
+interface CustomerViewState
+{
+    showAlert: boolean;  
+}
+
+class Customer extends React.Component<CustomerProps, CustomerViewState> {
 
     componentWillMount() {
         // This method runs when the component is first added to the page
+
+        this.setState(p => { return { showAlert: false}})
+
         this.props.requestCustomers(); 
 
         let customerId = parseInt(this.props.match.params.customerId);
@@ -53,6 +61,27 @@ class Customer extends React.Component<CustomerProps, {}> {
            
             this.props.clearCustomerDetails(); 
         }
+
+        if (this.props.isAccountDeleted == null && nextProps.isAccountDeleted != null) {
+            this.setState(p => { return { showAlert: true } })
+
+            if (nextProps.isAccountDeleted === true) {
+                this.formActions.RefreshCustomerDetails(); 
+            }
+
+        }
+    }
+
+    showAlert = (isDeleted : boolean) => {
+        return <Alert bsStyle={isDeleted? "success": "danger"} onDismiss={this.handleDismissMessage}>
+            <p>
+                {isDeleted ? "Account was deleted" : "Unable to delete account :( "}
+            </p>
+        </Alert>;
+    }
+
+    handleDismissMessage = () => {
+        this.setState(p => { return { showAlert: false } }); 
     }
 
     ///Handles customerId changes to request a new customer 
@@ -70,11 +99,13 @@ class Customer extends React.Component<CustomerProps, {}> {
 
     render() {
         return <div className="container">
-            {this.props.isLoading? this.renderIsLoading() : ""}
+            {this.props.isLoading ? this.renderIsLoading() : ""}
+
             <div className="col-xs-3">
                 <CustomerList customers={this.props.customers} selectedId={this.props.selectedCustomer} />
             </div>
-            <div className="col-xs-9">   
+            <div className="col-xs-9">  
+                {this.state.showAlert ? this.showAlert(this.props.isAccountDeleted) : null}
                 {this.props.customerDetail ? this.renderCustomerDetails() : <div className="text-center block-center">Select a customer please</div>}  
             </div>
         </div>
@@ -87,8 +118,8 @@ class Customer extends React.Component<CustomerProps, {}> {
                 <CustomerDetail customerDetail={this.props.customerDetail} onDelete={this.accountOnDeleteHandler} />
             </div>
             <div>
-                <CreateAccountForm {...this.props.accountForm} {...this.formActions}
-                    ShouldReset={this.props.isLoadingCustomerDetail} />
+                <CreateAccountForm {...this.props.accountForm} {...this.formActions} IsAccountAdded={this.props.isAccountAdded}
+                    ShouldReset={this.props.selectedCustomer != this.props.customerDetail.id} />
             </div>
         </div>;
     }
@@ -126,6 +157,13 @@ class Customer extends React.Component<CustomerProps, {}> {
         {
             this.props.addAccount({ ...account, customerId: this.props.customerDetail.id });
         },
+
+        //this gets called after account is added 
+        RefreshCustomerDetails: () => {
+            //redirect to '/this.props.selectedCustomer/lastPage' rathar than this 
+            this.props.requestCustomerDetails(this.props.selectedCustomer, this.props.customerDetail.pageIndex, true);
+
+        }
     }
    
 }
@@ -139,6 +177,8 @@ const mapStateToProps = (state: ApplicationState): CustomerProps => {
         selectedCustomer: state.customer.selectedCustomer,
         accountsPageIndex: state.customer.accountsPageIndex,
         isLoadingCustomerDetail: state.customer.isLoadingCustomerDetail,
+        isAccountAdded: state.customer.isAccountAdded,
+        isAccountDeleted: state.customer.isAccountDeleted
     } as CustomerProps
 };
 

@@ -12,6 +12,8 @@ export interface CustomerState {
     customerDetail?: CustomerDetail; 
     customers: CustomerSummary[]; 
     accountForm?: AccountFormState; 
+    isAccountAdded: boolean; 
+    isAccountDeleted: boolean; 
 }
 
 export interface CustomerSummary{
@@ -83,15 +85,25 @@ interface ClearCustomerDetailsAction {
     type: 'CLEAR_CUSTOMER'; 
 }
 
+
+interface RequestAccountsAction {
+    type: 'REQUEST_ACCOUNTS';
+    customerId: number;
+    pageIndex: number;
+}
+
+interface ReceiveAccountsAction {
+    type: 'RECEIVE_ACCOUNTS';
+    accounts: CustomerAccount[];
+}
+
 interface RequestDeleteAccountAction {
     type: 'REQUEST_DELETE_ACCOUNT';
-    customerId: number; 
-    accountId: number;
 }
 
 interface ReceiveDeleteAccountAction {
     type: 'RECEIVE_DELETE_ACCOUNT';
-    customerDetail: CustomerDetail; 
+    isSuccess: boolean; 
 }
 
 interface RequestAddAccountAction {
@@ -101,7 +113,7 @@ interface RequestAddAccountAction {
 
 interface ReceiveAddAccountAction {
     type: 'RECEIVE_ADD_ACCOUNT';
-    customerDetail: CustomerDetail;
+    isSuccess: boolean; 
 }
 
 interface RequestAccountTypesAction {
@@ -138,6 +150,7 @@ type KnownAction =
     RequestCustomersAction | ReceiveCustomersAction
     | RequestCustomerDetailsAction | ReceiveCustomerDetailsAction | ClearCustomerDetailsAction
     | RequestDeleteAccountAction | ReceiveDeleteAccountAction
+    | RequestAccountsAction | ReceiveAccountsAction
     | RequestAddAccountAction | ReceiveAddAccountAction
     | RequestAccountTypesAction | ReceiveAccountTypesAction
     | RequestClassCodesAction | ReceiveClassCodesAction
@@ -163,10 +176,10 @@ export const actionCreators = {
         }
     },
 
-    requestCustomerDetails: (customerId: number, pageIndex: number = 1): AppThunkAction<KnownAction> => (dispatch, getState) => {
+    requestCustomerDetails: (customerId: number, pageIndex: number = 1, force: boolean = false): AppThunkAction<KnownAction> => (dispatch, getState) => {
 
         // Only load data if it's something we don't already have (and are not already loading)
-        if (!getState().customer.customerDetail || customerId !== getState().customer.customerDetail.id || pageIndex != getState().customer.accountsPageIndex) {
+        if (force || !getState().customer.customerDetail || customerId !== getState().customer.customerDetail.id || pageIndex != getState().customer.accountsPageIndex) {
             let fetchTask = fetch(`api/customers/${customerId}/${pageIndex}`)
                 .then(response => response.json() as Promise<CustomerDetail>)
                 .then(data => {
@@ -180,22 +193,36 @@ export const actionCreators = {
 
     clearCustomerDetails: (): AppThunkAction<KnownAction> => (dispatch, getState) => {
 
-        dispatch({ type: 'CLEAR_CUSTOMER'}); 
+        dispatch({ type: 'CLEAR_CUSTOMER' });
     },
+
+    requestAccounts: (customerId: number, pageIndex: number = 1): AppThunkAction<KnownAction> => (dispatch, getState) => {
+        if (!getState().customer.customerDetail || customerId !== getState().customer.customerDetail.id || pageIndex != getState().customer.accountsPageIndex) {
+            let fetchTask = fetch(`api/customers/${customerId}/accounts?pageIndex=${pageIndex}`)
+                .then(response => response.json() as Promise<CustomerAccount[]>)
+                .then(data => {
+                    dispatch({ type: 'RECEIVE_ACCOUNTS', accounts: data });
+                });
+
+            addTask(fetchTask); // Ensure server-side prerendering waits for this to complete
+            dispatch({ type: 'REQUEST_ACCOUNTS', customerId, pageIndex });
+        }
+    },
+
 
     deleteAccount: (customerId: number, accountId: number): AppThunkAction<KnownAction> => (dispatch, getState) => {
         // Only load data if it's something we don't already have (and are not already loading)
-        let fetchTask = fetch(`api/customers/${customerId}/account/${accountId}`, {method:"DELETE"})
-            .then(response => response.json() as Promise<CustomerDetail>)
-            .then(data =>{
-                dispatch({ type: 'RECEIVE_DELETE_ACCOUNT', customerDetail: data} );
-                });
+        let fetchTask = fetch(`api/customers/${customerId}/account/${accountId}`, { method: "DELETE" })
+            .then(response => {
+                console.log(`deleteng ${accountId}`); 
+                dispatch({ type: 'RECEIVE_DELETE_ACCOUNT', isSuccess: (response.status==200) });
+            });
 
         addTask(fetchTask); // Ensure server-side prerendering waits for this to complete
-        dispatch({ type: 'REQUEST_DELETE_ACCOUNT', customerId, accountId});
+        dispatch({ type: 'REQUEST_DELETE_ACCOUNT'});
     },
 
-    addAccount: (account : CreateCustomerAccount): AppThunkAction<KnownAction> => (dispatch, getState) => {
+    addAccount: (account: CreateCustomerAccount): AppThunkAction<KnownAction> => (dispatch, getState) => {
         // Only load data if it's something we don't already have (and are not already loading)
         let fetchTask = fetch(`api/customers/${account.customerId}/account`,
             {
@@ -205,10 +232,14 @@ export const actionCreators = {
                     'content-type': 'application/json'
                 },
             })
-            .then(response => response.json() as Promise<CustomerDetail>)
-            .then(data => {
-                dispatch({ type: 'RECEIVE_ADD_ACCOUNT', customerDetail: data });
-            });
+            .then(response => {
+                if (response.status == 201) {
+                    dispatch({type: "RECEIVE_ADD_ACCOUNT",  isSuccess: true }); 
+                }
+                else {
+                    dispatch({ type: "RECEIVE_ADD_ACCOUNT", isSuccess: false });
+                }
+            }); 
 
         addTask(fetchTask); // Ensure server-side prerendering waits for this to complete
         dispatch({ type: 'REQUEST_ADD_ACCOUNT', account });
@@ -268,6 +299,8 @@ export const actionCreators = {
 const unloadedState: CustomerState = {
     isLoading: false,
     isLoadingCustomerDetail: false,
+    isAccountAdded: null,
+    isAccountDeleted: null,
     selectedCustomer: null,
     accountsPageIndex: 1,
     customers: [],
@@ -314,27 +347,44 @@ export const reducer: Reducer<CustomerState> = (state: CustomerState, incomingAc
                 customerDetail: null, 
                 selectedCustomer: null
             }
+        case 'REQUEST_ACCOUNTS':
+            return {
+                ...state,
+                isLoadingCustomerDetail: true,
+                selectedCustomer: action.customerId,
+                accountsPageIndex: action.pageIndex,
+                isLoading: true
+            };
+        case 'RECEIVE_ACCOUNTS':
+            return {
+                ...state,
+                isLoadingCustomerDetail: false,
+                customerDetail: { ...state.customerDetail, accounts: action.accounts },
+                isLoading: false
+            };
         case 'REQUEST_DELETE_ACCOUNT':
             return {
                 ...state, 
-                isLoading: true
+                isLoading: true,
+                isAccountDeleted: null, 
             }
         case 'RECEIVE_DELETE_ACCOUNT':
             return {
                 ...state,
                 isLoading: false,
-                customerDetail: action.customerDetail,
+                isAccountDeleted: action.isSuccess,
             }
         case 'REQUEST_ADD_ACCOUNT':
             return {
                 ...state,
-                isLoading: true
+                isLoading: true,
+                isAccountAdded: null
             }
         case 'RECEIVE_ADD_ACCOUNT':
             return {
                 ...state,
                 isLoading: false,
-                customerDetail: action.customerDetail,
+                isAccountAdded: action.isSuccess,
             }
         case 'REQUEST_ACCOUNT_TYPES':
             return {

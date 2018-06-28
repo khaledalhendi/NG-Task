@@ -13,7 +13,9 @@ type CreateAccountProp =
     & {
         AccountTypeSelected: (string) => void,
         AddAccount: (CreateCustomerAccount) => void,
+        RefreshCustomerDetails: () => void,
         ShouldReset: boolean,
+        IsAccountAdded: boolean, 
     };
 
 interface CreateAccountFormState
@@ -49,9 +51,31 @@ export class CreateAccountForm extends React.Component<CreateAccountProp, Create
     }
 
     componentWillReceiveProps(nextProps: CreateAccountProp) {
-        if (nextProps.ShouldReset && nextProps.ShouldReset != this.props.ShouldReset) {
+       
+
+        if (this.props.IsAccountAdded == null && nextProps.IsAccountAdded != null) {
+            if (nextProps.IsAccountAdded) {
+
+                this.resetForm();
+
+                this.props.RefreshCustomerDetails(); 
+
+                this.AppendState({
+                    formMessage: "Account was created!",
+                    formMessageStyle: "success"
+                });
+            } else {
+                this.AppendState({
+                    formMessage: "Unable to add  account :(",
+                    formMessageStyle: "danger"
+                });
+            }
+        }
+        else if (nextProps.ShouldReset && nextProps.ShouldReset != this.props.ShouldReset) {
             this.resetForm();
         }
+
+
     }
 
     render() {
@@ -119,17 +143,19 @@ export class CreateAccountForm extends React.Component<CreateAccountProp, Create
     }
 
     private resetForm() {
-        this.setState({
-            selectedAccountType: null,
-            selectedClassCode: null,
-            selectedCurrencyISO: null,
-            balanceInput: null,
-            formMessage: null,
-            isAccountTypeValid: null,
-            isbalanceValid: null,
-            isClassCodeValid: null,
-            isCurrencyISOValid: null,
-        } as CreateAccountFormState);
+        this.setState((p) => {
+            return {
+                selectedAccountType: null,
+                selectedClassCode: null,
+                selectedCurrencyISO: null,
+                balanceInput: null,
+                formMessage: null,
+                isAccountTypeInvalid: null,
+                isbalanceInvalid: null,
+                isClassCodeInvalid: null,
+                isBalanceInvalid: null
+            } as CreateAccountFormState
+        });
     }
 
     //helper function
@@ -220,13 +246,6 @@ export class CreateAccountForm extends React.Component<CreateAccountProp, Create
                 customerId: null //form doesn't know customer id. 
             };
 
-        this.props.AddAccount(account);
-        this.resetForm();
-
-        this.AppendState({
-            formMessage: "Account was created!",
-            formMessageStyle: "success"
-        });
-        
+        this.props.AddAccount(account); 
     }
 }
