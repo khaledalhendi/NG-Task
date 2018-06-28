@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using NG_Task.Entities;
 using NG_Task.Models;
+using NG_Task.Repository;
 
 namespace NG_Task.Controllers
 {
@@ -16,17 +17,17 @@ namespace NG_Task.Controllers
         const int DefaultPageIndex = 1;
         const int DefaultPageSize = 3;
 
-        private NGContext NGContext;
+        private IUnitOfWork UnitOfWork;
 
-        public CustomersController(NGContext NGContext)
+        public CustomersController(IUnitOfWork unitOfWork)
         {
-            this.NGContext = NGContext;
+            UnitOfWork = unitOfWork;
         }
 
         [HttpGet]
         public IActionResult GetCustomers()
         {
-            IEnumerable<CustomerViewDto> result = AutoMapper.Mapper.Map<IEnumerable<CustomerViewDto>>(NGContext.Customers);
+            IEnumerable<CustomerViewDto> result = AutoMapper.Mapper.Map<IEnumerable<CustomerViewDto>>(UnitOfWork.CustomerRepository.GetAll());
 
             return Ok(result);
         }
@@ -34,28 +35,24 @@ namespace NG_Task.Controllers
         [HttpGet("{customerId}/{pageIndex?}", Name = "CustomerDetails")]
         public IActionResult GetCustomer(int customerId, int pageIndex = DefaultPageIndex)
         {
-            Customer customer = NGContext.Customers.Include(c => c.Accounts).ThenInclude(a => a.Currency).FirstOrDefault(c => c.Id == customerId);
+            Customer customer = UnitOfWork.CustomerRepository.GetCustomerDetail(customerId); 
 
             if (customer == null)
             {
                 return NotFound();
             }
 
-            Currency localCurrency = NGContext.Currencies.Where(c => MathF.Abs((float)(c.Multiplier - 1m)) < 0.0001f).SingleOrDefault(); 
+            Currency localCurrency = UnitOfWork.ConstantRepository.GetLocalCurrency(); 
             CustomerDetailDto customerDto = AutoMapper.Mapper.Map<CustomerDetailDto>(customer);
 
             decimal totalBalance = customer.Accounts.Sum(a => a.Balance / a.Currency.Multiplier);
             customerDto.TotalBalance = totalBalance.ToString("c", CultureInfo.CreateSpecificCulture(localCurrency.Culture)); 
-
             customerDto.AccountLength = customer.Accounts.Count();
 
-            int lastPage = (int)MathF.Ceiling((float)customerDto.AccountLength / DefaultPageSize);
-            if (pageIndex > lastPage)
-            {
-                pageIndex = lastPage;
-            }
-
-            customerDto.Accounts = PickAccounts(customerId, pageIndex).ToArray();
+            IEnumerable<Account> accounts = UnitOfWork.AccountRepository.GetPagedAccounts(customerId, pageIndex, DefaultPageSize);
+            ICollection<AccountDto> accountDtos = (ICollection<AccountDto>)AutoMapper.Mapper.Map<IEnumerable<AccountDto>>(accounts);
+           
+            customerDto.Accounts = accountDtos; 
             customerDto.PageIndex = pageIndex;
             customerDto.PageSize = DefaultPageSize; 
             return Ok(customerDto);
@@ -64,7 +61,7 @@ namespace NG_Task.Controllers
         [HttpPost("{customerId}/account")]
         public IActionResult AddAccount(int customerId, [FromBody] AccountCreateDto accountCreateDto)
         {
-            Customer customer = NGContext.Customers.Include(c => c.Accounts).FirstOrDefault(c => c.Id == customerId);
+            Customer customer = UnitOfWork.CustomerRepository.Get(customerId);
 
             if (customer == null)
             {
@@ -79,8 +76,8 @@ namespace NG_Task.Controllers
             Account account = AutoMapper.Mapper.Map<Account>(accountCreateDto);
             account.CustomerId = customerId;
 
-            NGContext.Accounts.Add(account);
-            NGContext.SaveChanges();
+            UnitOfWork.AccountRepository.Add(account);
+            UnitOfWork.Complete(); 
 
             return GetCustomer(customerId);
         }
@@ -88,76 +85,34 @@ namespace NG_Task.Controllers
         [HttpDelete("{customerId}/account/{accountId}")]
         public IActionResult DeleteAccount(int customerId, int accountId)
         {
-            Customer customer = NGContext.Customers.Include(c => c.Accounts).FirstOrDefault(c => c.Id == customerId);
+            var account = UnitOfWork.AccountRepository.Get(accountId); 
 
-            if (customer == null)
+            if(account == null)
             {
-                return NotFound();
+                return NotFound(); 
             }
 
-            Account account = customer.Accounts.FirstOrDefault(a => a.Id == accountId);
-
-            if (account == null)
-            {
-                return NotFound();
-            }
-
-            NGContext.Accounts.Remove(account);
-            NGContext.SaveChanges();
-
+            UnitOfWork.AccountRepository.Remove(account);
+            UnitOfWork.Complete();
 
             return GetCustomer(customerId); 
-        }
-
-        [HttpGet("{customerId}/account/{accountId}", Name = "GetAccount")]
-        public IActionResult GetCustomerAccount(int customerId, int accountId)
-        {
-            Customer customer = NGContext.Customers.Include(c => c.Accounts).ThenInclude(a => a.Currency).FirstOrDefault(c => c.Id == customerId);
-
-            if (customer == null)
-            {
-                return NotFound();
-            }
-
-            Account account = customer.Accounts.FirstOrDefault(a => a.Id == accountId);
-
-            if (account == null)
-            {
-                return NotFound();
-            }
-
-            AccountDto accountDto = AutoMapper.Mapper.Map<AccountDto>(account);
-            return Ok(accountDto);
         }
 
         [HttpGet("{customerId}/accounts/{pageIndex?}", Name = "GetAccounts")]
         public IActionResult GetCustomerAccounts(int customerId, int pageIndex = DefaultPageIndex)
         {
-            Customer customer = NGContext.Customers.Include(c => c.Accounts).FirstOrDefault(c => c.Id == customerId);
+            Customer customer = UnitOfWork.CustomerRepository.Get(customerId); 
 
             if (customer == null)
             {
                 return NotFound();
             }
 
-            return Ok(PickAccounts(customerId, pageIndex));
+            IEnumerable<Account> accounts = UnitOfWork.AccountRepository.GetPagedAccounts(customerId, pageIndex, DefaultPageSize);
+            IEnumerable<AccountDto> accountDtos = AutoMapper.Mapper.Map<IEnumerable<AccountDto>>(accounts); 
+
+            return Ok();
         }
 
-
-        private IEnumerable<AccountDto> PickAccounts(int customerId, int pageIndex, int pageSize = DefaultPageSize)
-        {
-            Customer customer = NGContext.Customers.Include(c => c.Accounts).ThenInclude(a => a.Currency).FirstOrDefault(c => c.Id == customerId);
-
-            if (customer == null)
-            {
-                return null;
-            }
-
-            IEnumerable<Account> account = customer.Accounts.Skip((pageIndex - 1) * pageSize).Take(pageSize);
-
-            IEnumerable<AccountDto> accountDtos = AutoMapper.Mapper.Map<IEnumerable<AccountDto>>(account);
-
-            return accountDtos;
-        }
     }
 }

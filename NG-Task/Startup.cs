@@ -11,6 +11,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using NG_Task.Entities;
 using NG_Task.Models;
+using NG_Task.Repository;
 using NG_Task.Seed;
 
 namespace NG_Task
@@ -31,6 +32,9 @@ namespace NG_Task
 
             string connectionString = Configuration["sqlconnection"]; 
             services.AddDbContext<NGContext>(o => o.UseSqlServer(connectionString));
+
+
+            services.AddScoped<IUnitOfWork, UnitOfWork>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
