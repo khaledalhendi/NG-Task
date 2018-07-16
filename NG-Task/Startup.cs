@@ -29,7 +29,7 @@ namespace NG_Task
         {
             services.AddMvc();
 
-            string connectionString = Configuration["sqlconnection"]; 
+            string connectionString = Configuration["SQLSERVER_CONNECTION_STRING"]; 
             services.AddDbContext<NGContext>(o => o.UseSqlServer(connectionString));
         }
 
